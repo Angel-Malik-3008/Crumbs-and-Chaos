@@ -1,0 +1,578 @@
+/* ========================================
+GENERAL STYLES
+======================================== */
+
+{
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+background: #fff8f0;
+color: #3d2418;
+}
+
+/* ========================================
+HEADER
+======================================== */
+
+header {
+background: #6b3825;
+color: white;
+padding: 20px 7%;
+
+display: flex;
+justify-content: space-between;
+align-items: center;
+
+position: sticky;
+top: 0;
+z-index: 10;
+}
+
+header h1 {
+font-size: 25px;
+}
+
+header p {
+font-size: 12px;
+opacity: 0.7;
+}
+
+/* CART BUTTON */
+
+#cartButton {
+background: #ffcf70;
+color: #3d2418;
+
+border: none;
+padding: 12px 20px;
+
+border-radius: 25px;
+
+cursor: pointer;
+
+font-weight: bold;
+}
+
+#cartButton:hover {
+background: #ffd98f;
+}
+
+/* ========================================
+HERO SECTION
+======================================== */
+
+.hero {
+text-align: center;
+
+padding: 70px 20px 50px;
+
+background: #f7d9b8;
+}
+
+.hero h2 {
+font-size: 48px;
+margin-bottom: 10px;
+}
+
+.hero p {
+font-size: 18px;
+}
+
+/* ========================================
+PRODUCTS
+======================================== */
+
+.products {
+width: 86%;
+max-width: 1200px;
+
+margin: 50px auto;
+
+display: grid;
+
+grid-template-columns:
+repeat(auto-fit, minmax(220px, 1fr));
+
+gap: 25px;
+}
+
+/* PRODUCT CARD */
+
+.product {
+background: white;
+
+border-radius: 15px;
+
+overflow: hidden;
+
+box-shadow:
+0 5px 20px rgba(0, 0, 0, 0.08);
+
+transition: 0.2s;
+}
+
+.product:hover {
+transform: translateY(-4px);
+
+box-shadow:
+0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* PRODUCT IMAGE */
+
+.product-image {
+height: 180px;
+
+display: flex;
+
+justify-content: center;
+align-items: center;
+
+font-size: 80px;
+
+background: #ffe9d0;
+}
+
+/* PRODUCT INFORMATION */
+
+.product-info {
+padding: 20px;
+}
+
+.product-info h3 {
+margin-bottom: 8px;
+}
+
+/* PRICE */
+
+.price {
+color: #a54e27;
+
+font-weight: bold;
+
+margin-bottom: 15px;
+}
+
+/* ADD TO CART BUTTON */
+
+.add-btn {
+width: 100%;
+
+padding: 11px;
+
+border: none;
+
+background: #6b3825;
+
+color: white;
+
+border-radius: 8px;
+
+cursor: pointer;
+}
+
+.add-btn:hover {
+background: #8b4b32;
+}
+
+/* ========================================
+CART PANEL
+======================================== */
+
+#cartPanel {
+position: fixed;
+
+top: 0;
+right: -420px;
+
+width: 400px;
+height: 100vh;
+
+background: white;
+
+box-shadow:
+-5px 0 20px rgba(0, 0, 0, 0.2);
+
+z-index: 100;
+
+padding: 25px;
+
+transition: 0.3s;
+
+display: flex;
+
+flex-direction: column;
+}
+
+/* OPEN CART */
+
+#cartPanel.open {
+right: 0;
+}
+
+/* CART HEADER */
+
+.cart-header {
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+margin-bottom: 20px;
+}
+
+/* CLOSE BUTTON */
+
+#closeCart {
+border: none;
+
+background: none;
+
+font-size: 25px;
+
+cursor: pointer;
+}
+
+/* CART ITEMS */
+
+#cartItems {
+flex: 1;
+
+overflow-y: auto;
+}
+
+/* INDIVIDUAL CART ITEM */
+
+.cart-item {
+padding: 12px 0;
+
+border-bottom: 1px solid #eee;
+
+display: flex;
+
+justify-content: space-between;
+}
+
+/* REMOVE BUTTON */
+
+.remove {
+color: red;
+
+cursor: pointer;
+
+font-size: 12px;
+}
+
+/* CART TOTAL */
+
+.cart-total {
+padding: 20px 0;
+
+font-size: 20px;
+
+font-weight: bold;
+}
+
+/* CHECKOUT BUTTON */
+
+#checkoutBtn {
+width: 100%;
+
+padding: 15px;
+
+background: #e89b35;
+
+border: none;
+
+border-radius: 8px;
+
+color: white;
+
+font-weight: bold;
+
+cursor: pointer;
+}
+
+#checkoutBtn:hover {
+background: #d88925;
+}
+
+/* ========================================
+OVERLAY
+======================================== */
+
+.overlay {
+position: fixed;
+
+inset: 0;
+
+background: rgba(0, 0, 0, 0.65);
+
+z-index: 200;
+
+display: none;
+
+justify-content: center;
+
+align-items: center;
+
+padding: 20px;
+}
+
+/* SHOW OVERLAY */
+
+.overlay.show {
+display: flex;
+}
+
+/* ========================================
+FORTUNE WINDOW
+======================================== */
+
+.fortune-box {
+background: #fffaf0;
+
+width: 500px;
+
+max-width: 100%;
+
+padding: 35px;
+
+border-radius: 20px;
+
+text-align: center;
+
+box-shadow:
+0 15px 50px rgba(0, 0, 0, 0.4);
+
+position: relative;
+}
+
+/* FORTUNE TITLE */
+
+.fortune-box h2 {
+margin-bottom: 10px;
+
+color: #6b3825;
+}
+
+/* COOKIE */
+
+.cookie {
+font-size: 100px;
+
+margin: 20px 0;
+}
+
+/* ========================================
+FORTUNE METER
+======================================== */
+
+.fortune-meter {
+width: 100%;
+
+height: 22px;
+
+background: #ddd;
+
+border-radius: 20px;
+
+overflow: hidden;
+
+margin: 20px 0;
+}
+
+/* FORTUNE BAR */
+
+#fortuneBar {
+height: 100%;
+
+width: 100%;
+
+background: #4caf50;
+
+transition:
+width 0.5s,
+background 0.5s;
+}
+
+/* FORTUNE VALUE */
+
+#fortuneValue {
+font-weight: bold;
+
+font-size: 18px;
+}
+
+/* FORTUNE MESSAGE */
+
+#fortuneMessage {
+min-height: 60px;
+
+margin: 20px 0;
+
+font-size: 18px;
+
+color: #8d3020;
+}
+
+/* ========================================
+FORTUNE BUTTONS
+======================================== */
+
+.fortune-buttons {
+display: flex;
+
+gap: 10px;
+}
+
+.fortune-buttons button {
+flex: 1;
+
+padding: 13px;
+
+border: none;
+
+border-radius: 8px;
+
+cursor: pointer;
+
+font-weight: bold;
+}
+
+/* TRY AGAIN */
+
+#tryAgain {
+background: #e8b65a;
+
+color: #3d2418;
+}
+
+#tryAgain:hover {
+background: #dca94d;
+}
+
+/* GIVE UP */
+
+#giveUp {
+background: #ddd;
+}
+
+#giveUp:hover {
+background: #ccc;
+}
+
+/* ========================================
+BLOCKED MESSAGE
+======================================== */
+
+#blockedMessage {
+display: none;
+}
+
+#blockedMessage h2 {
+color: #a32121;
+
+margin-bottom: 15px;
+}
+
+#blockedMessage p {
+margin-bottom: 20px;
+
+line-height: 1.5;
+}
+
+/* RETURN TO SHOP */
+
+#backToShop {
+padding: 12px 20px;
+
+border: none;
+
+background: #6b3825;
+
+color: white;
+
+border-radius: 8px;
+
+cursor: pointer;
+}
+
+#backToShop:hover {
+background: #8b4b32;
+}
+
+/* ========================================
+FOOTER
+======================================== */
+
+footer {
+text-align: center;
+
+padding: 40px;
+
+background: #3d2418;
+
+color: white;
+
+margin-top: 80px;
+}
+
+/* ========================================
+MOBILE RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 500px) {
+
+/* CART TAKES FULL SCREEN */
+
+#cartPanel {
+width: 100%;
+}
+
+/* SMALLER HERO TITLE */
+
+.hero h2 {
+font-size: 34px;
+}
+
+/* SMALLER HEADER */
+
+header {
+padding: 15px 5%;
+}
+
+header h1 {
+font-size: 20px;
+}
+
+header p {
+font-size: 10px;
+}
+
+/* SMALLER CART BUTTON */
+
+#cartButton {
+padding: 10px 14px;
+
+font-size: 12px;
+
+
+}
+
+/* SMALLER FORTUNE WINDOW */
+
+.fortune-box {
+padding: 25px 20px;
+}
+
+.cookie {
+font-size: 75px;
+}
+
+}

@@ -307,9 +307,6 @@ function updateFortune() {
 // TRY FORTUNE
 // =========================
 
-// =========================
-// TRY YOUR FORTUNE
-// =========================
 
 tryAgain.addEventListener("click", function () {
 
@@ -468,21 +465,21 @@ tryAgain.addEventListener("click", function () {
   // BLOCK AT ZERO
   // =========================
 
-  if (fortune === 0) {
+  if (fortune <= 0) {
 
     tryAgain.disabled = true;
 
-    setTimeout(() => {
+    setTimeout(function () {
 
       fortuneScreen.style.display = "none";
-
       blockedMessage.style.display = "block";
 
-    }, 800);
+    }, 900);
 
   }
 
 });
+
 
 
 // =========================
@@ -494,6 +491,7 @@ giveUp.addEventListener("click", function () {
   fortuneOverlay.classList.remove("show");
 
 });
+
 
 
 // =========================

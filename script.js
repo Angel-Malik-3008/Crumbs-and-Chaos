@@ -22,25 +22,23 @@ function addToCart(name, price) {
 
   updateCart();
 
-  // Open cart after adding
+  // Open cart automatically
   document.getElementById("cartPanel").classList.add("open");
 }
 
 
-// Update cart display
+// Update cart
 function updateCart() {
 
   const cartItems = document.getElementById("cartItems");
   const cartCount = document.getElementById("cartCount");
   const cartTotal = document.getElementById("cartTotal");
 
-  // Calculate total quantity
   const totalItems = cart.reduce(
     (total, item) => total + item.quantity,
     0
   );
 
-  // Calculate total price
   const totalPrice = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -61,7 +59,7 @@ function updateCart() {
   }
 
 
-  // Display cart items
+  // Display cart
   cartItems.innerHTML = cart.map((item, index) => {
 
     return `
@@ -79,9 +77,7 @@ function updateCart() {
             −
           </button>
 
-          <span>
-            ${item.quantity}
-          </span>
+          <span>${item.quantity}</span>
 
           <button onclick="changeQuantity(${index}, 1)">
             +
@@ -96,12 +92,11 @@ function updateCart() {
 }
 
 
-// Change item quantity
+// Change quantity
 function changeQuantity(index, change) {
 
   cart[index].quantity += change;
 
-  // Remove item if quantity reaches zero
   if (cart[index].quantity <= 0) {
     cart.splice(index, 1);
   }
@@ -141,7 +136,10 @@ closeCart.addEventListener("click", function () {
 
 let fortune = 100;
 
+let fortuneAttempts = 0;
+
 const fortuneOverlay = document.getElementById("fortuneOverlay");
+
 const fortuneScreen = document.getElementById("fortuneScreen");
 const blockedMessage = document.getElementById("blockedMessage");
 
@@ -154,38 +152,108 @@ const giveUp = document.getElementById("giveUp");
 const backToShop = document.getElementById("backToShop");
 
 
-// Fortune messages
-const fortunes = [
+// =========================
+// FORTUNE MESSAGES
+// =========================
+
+const fortuneMessages = [
 
   {
-    message: "Your future looks suspiciously average.",
-    min: 70
+    min: 90,
+    messages: [
+      "The universe is cautiously optimistic.",
+      "Your future looks suspiciously delicious.",
+      "The bakery gods have noticed you.",
+      "Something good might happen. Maybe."
+    ]
   },
 
   {
-    message: "A delicious future awaits you.",
-    min: 50
+    min: 75,
+    messages: [
+      "A croissant believes in you.",
+      "Your luck is holding together like a fresh pastry.",
+      "The universe has given you a polite nod.",
+      "Things are going surprisingly okay."
+    ]
   },
 
   {
-    message: "The universe is mildly concerned.",
-    min: 30
+    min: 60,
+    messages: [
+      "Your future smells faintly of butter.",
+      "The bakery approves of your decisions.",
+      "You may survive another fortune attempt.",
+      "Luck is still on speaking terms with you."
+    ]
   },
 
   {
-    message: "Your croissant may be judging you.",
-    min: 15
+    min: 45,
+    messages: [
+      "The universe is becoming suspicious.",
+      "Your fortune is getting slightly burnt.",
+      "A cookie somewhere is judging you.",
+      "Things are becoming unnecessarily dramatic."
+    ]
   },
 
   {
-    message: "The bakery gods have abandoned you.",
-    min: 0
+    min: 30,
+    messages: [
+      "Your luck has entered its flop era.",
+      "The baguette has stopped believing in you.",
+      "The universe is slowly closing the bakery door.",
+      "You probably shouldn't have pressed that button."
+    ]
+  },
+
+  {
+    min: 15,
+    messages: [
+      "This is getting concerning.",
+      "Your fortune is hanging on by a crumb.",
+      "The bakery gods are whispering.",
+      "One more bad decision might do it."
+    ]
+  },
+
+  {
+    min: 1,
+    messages: [
+      "Your luck is basically a breadcrumb.",
+      "The universe is preparing the rejection letter.",
+      "Your fortune has seen better days.",
+      "You are dangerously close to being bakery-banned."
+    ]
   }
 
 ];
 
 
-// Open fortune modal
+// Pick random message
+function getFortuneMessage() {
+
+  const category = fortuneMessages.find(
+    category => fortune >= category.min
+  );
+
+  if (!category) {
+    return "The universe has completely given up.";
+  }
+
+  const randomIndex = Math.floor(
+    Math.random() * category.messages.length
+  );
+
+  return category.messages[randomIndex];
+}
+
+
+// =========================
+// OPEN FORTUNE
+// =========================
+
 function openFortune() {
 
   fortuneOverlay.classList.add("show");
@@ -194,21 +262,30 @@ function openFortune() {
   blockedMessage.style.display = "none";
 
   fortune = 100;
+  fortuneAttempts = 0;
+
+  // FIRST BUTTON TEXT
+  tryAgain.textContent = "🔮 Try Your Fortune";
 
   updateFortune();
-
 }
 
 
-// Update fortune display
+// =========================
+// UPDATE FORTUNE
+// =========================
+
 function updateFortune() {
 
   fortuneValue.textContent = `Fortune: ${fortune}%`;
 
   fortuneBar.style.width = `${fortune}%`;
 
+  fortuneMessage.textContent = getFortuneMessage();
 
-  // Change bar colour
+
+  // Fortune bar colours
+
   if (fortune >= 70) {
 
     fortuneBar.style.background = "#7bc96f";
@@ -222,49 +299,84 @@ function updateFortune() {
     fortuneBar.style.background = "#d9534f";
 
   }
-
-
-  // Find appropriate message
-  const selectedFortune = fortunes.find(
-    item => fortune >= item.min
-  );
-
-  fortuneMessage.textContent = selectedFortune.message;
-
 }
 
 
-// Try fortune again
+// =========================
+// TRY FORTUNE
+// =========================
+
 tryAgain.addEventListener("click", function () {
 
-  // Randomly reduce fortune
-  const loss = Math.floor(Math.random() * 26) + 10;
+  fortuneAttempts++;
+
+
+  /*
+    Fortune decreases slowly.
+
+    First few attempts:
+    5–10%
+
+    Later attempts:
+    6–12%
+
+    This makes the fortune system last longer.
+  */
+
+  const minimumLoss = 5;
+  const maximumLoss = 10;
+
+  const loss =
+    Math.floor(
+      Math.random() *
+      (maximumLoss - minimumLoss + 1)
+    ) + minimumLoss;
+
 
   fortune -= loss;
+
 
   if (fortune < 0) {
     fortune = 0;
   }
 
+
+  // Change button after first attempt
+  if (fortuneAttempts === 1) {
+
+    tryAgain.textContent = "🔮 Try Again";
+
+  }
+
+
   updateFortune();
 
 
-  // Block checkout when fortune reaches zero
+  // =========================
+  // BLOCK AT ZERO
+  // =========================
+
   if (fortune === 0) {
+
+    tryAgain.disabled = true;
 
     setTimeout(() => {
 
       fortuneScreen.style.display = "none";
+
       blockedMessage.style.display = "block";
 
-    }, 700);
+    }, 800);
 
   }
 
 });
 
 
-// Give up
+// =========================
+// GIVE UP
+// =========================
+
 giveUp.addEventListener("click", function () {
 
   fortuneOverlay.classList.remove("show");
@@ -272,7 +384,10 @@ giveUp.addEventListener("click", function () {
 });
 
 
-// Return to bakery
+// =========================
+// RETURN TO SHOP
+// =========================
+
 backToShop.addEventListener("click", function () {
 
   fortuneOverlay.classList.remove("show");
@@ -288,10 +403,12 @@ const checkoutBtn = document.getElementById("checkoutBtn");
 
 checkoutBtn.addEventListener("click", function () {
 
-  // Don't allow checkout with empty cart
+  // Prevent empty checkout
   if (cart.length === 0) {
 
-    alert("Your cart is empty! Add something delicious first.");
+    alert(
+      "Your cart is empty! Add something delicious first."
+    );
 
     return;
   }
@@ -301,14 +418,14 @@ checkoutBtn.addEventListener("click", function () {
   cartPanel.classList.remove("open");
 
 
-  // Open fortune test
+  // Start fortune
   openFortune();
 
 });
 
 
 // =========================
-// INITIAL STATE
+// INITIALIZE
 // =========================
 
 updateCart();

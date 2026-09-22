@@ -1,473 +1,314 @@
-alert("JavaScript is working!");
-/* ========================================
-SHOPPING CART
-======================================== */
+// =========================
+// CART
+// =========================
 
 let cart = [];
 
+
+// Add product to cart
+function addToCart(name, price) {
+
+  const existingItem = cart.find(item => item.name === name);
+
+  if (existingItem) {
+    existingItem.quantity++;
+  } else {
+    cart.push({
+      name: name,
+      price: price,
+      quantity: 1
+    });
+  }
+
+  updateCart();
+
+  // Open cart after adding
+  document.getElementById("cartPanel").classList.add("open");
+}
+
+
+// Update cart display
+function updateCart() {
+
+  const cartItems = document.getElementById("cartItems");
+  const cartCount = document.getElementById("cartCount");
+  const cartTotal = document.getElementById("cartTotal");
+
+  // Calculate total quantity
+  const totalItems = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  // Calculate total price
+  const totalPrice = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  cartCount.textContent = totalItems;
+  cartTotal.textContent = totalPrice;
+
+
+  // Empty cart
+  if (cart.length === 0) {
+
+    cartItems.innerHTML = `
+      <p>Your cart is empty.</p>
+    `;
+
+    return;
+  }
+
+
+  // Display cart items
+  cartItems.innerHTML = cart.map((item, index) => {
+
+    return `
+      <div class="cart-item">
+
+        <div>
+          <strong>${item.name}</strong>
+          <br>
+          ₹${item.price} × ${item.quantity}
+        </div>
+
+        <div>
+
+          <button onclick="changeQuantity(${index}, -1)">
+            −
+          </button>
+
+          <span>
+            ${item.quantity}
+          </span>
+
+          <button onclick="changeQuantity(${index}, 1)">
+            +
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+
+// Change item quantity
+function changeQuantity(index, change) {
+
+  cart[index].quantity += change;
+
+  // Remove item if quantity reaches zero
+  if (cart[index].quantity <= 0) {
+    cart.splice(index, 1);
+  }
+
+  updateCart();
+}
+
+
+// =========================
+// CART PANEL
+// =========================
+
+const cartButton = document.getElementById("cartButton");
+const cartPanel = document.getElementById("cartPanel");
+const closeCart = document.getElementById("closeCart");
+
+
+// Open cart
+cartButton.addEventListener("click", function () {
+
+  cartPanel.classList.add("open");
+
+});
+
+
+// Close cart
+closeCart.addEventListener("click", function () {
+
+  cartPanel.classList.remove("open");
+
+});
+
+
+// =========================
+// FORTUNE SYSTEM
+// =========================
+
 let fortune = 100;
 
-let attempts = 0;
+const fortuneOverlay = document.getElementById("fortuneOverlay");
+const fortuneScreen = document.getElementById("fortuneScreen");
+const blockedMessage = document.getElementById("blockedMessage");
 
-let fortuneTimer;
+const fortuneValue = document.getElementById("fortuneValue");
+const fortuneBar = document.getElementById("fortuneBar");
+const fortuneMessage = document.getElementById("fortuneMessage");
 
-/* ========================================
-FORTUNE MESSAGES
-======================================== */
+const tryAgain = document.getElementById("tryAgain");
+const giveUp = document.getElementById("giveUp");
+const backToShop = document.getElementById("backToShop");
 
-const badFortunes = [
 
-"Bad news. Your luck has expired approximately 4 seconds ago.",
+// Fortune messages
+const fortunes = [
 
-"The cookie has examined your future and immediately looked away.",
+  {
+    message: "Your future looks suspiciously average.",
+    min: 70
+  },
 
-"You were going to be lucky. Then you clicked this button.",
+  {
+    message: "A delicious future awaits you.",
+    min: 50
+  },
 
-"Your fortune is currently unavailable. Please try again never.",
+  {
+    message: "The universe is mildly concerned.",
+    min: 30
+  },
 
-"A mysterious force has misplaced your good luck.",
+  {
+    message: "Your croissant may be judging you.",
+    min: 15
+  },
 
-"The universe says: absolutely not.",
-
-"Your future contains disappointment and possibly another cookie.",
-
-"Congratulations! You have successfully become less lucky.",
-
-"Your lucky number is 404. Fortune not found.",
-
-"The stars have reviewed your request. They declined.",
-
-"Your chances of buying this cake are decreasing rapidly.",
-
-"Please remain calm. Your fortune is getting worse."
+  {
+    message: "The bakery gods have abandoned you.",
+    min: 0
+  }
 
 ];
 
-/* ========================================
-ADD ITEM TO CART
-======================================== */
 
-function addToCart(name, price) {
-
-cart.push({
-name: name,
-price: price
-});
-
-updateCart();
-
-}
-
-/* ========================================
-REMOVE ITEM FROM CART
-======================================== */
-
-function removeFromCart(index) {
-
-cart.splice(index, 1);
-
-updateCart();
-
-}
-
-/* ========================================
-UPDATE CART
-======================================== */
-
-function updateCart() {
-
-const cartItems =
-document.getElementById("cartItems");
-
-const cartCount =
-document.getElementById("cartCount");
-
-const cartTotal =
-document.getElementById("cartTotal");
-
-/* Update number of items */
-
-cartCount.textContent = cart.length;
-
-/* If cart is empty */
-
-if (cart.length === 0) {
-
-cartItems.innerHTML =
-  "<p>Your cart is empty.</p>";
-
-cartTotal.textContent = "0";
-
-return;
-
-
-}
-
-/* Calculate total */
-
-let total = 0;
-
-/* Clear existing cart */
-
-cartItems.innerHTML = "";
-
-/* Add every item */
-
-cart.forEach((item, index) => {
-
-total += item.price;
-
-
-const div =
-  document.createElement("div");
-
-
-div.className = "cart-item";
-
-
-div.innerHTML = `
-
-  <div>
-
-    <strong>
-      ${item.name}
-    </strong>
-
-    <br>
-
-    ₹${item.price}
-
-  </div>
-
-
-  <div
-    class="remove"
-    onclick="removeFromCart(${index})"
-  >
-
-    Remove
-
-  </div>
-
-`;
-
-
-cartItems.appendChild(div);
-
-
-});
-
-/* Update total */
-
-cartTotal.textContent = total;
-
-}
-
-/* ========================================
-OPEN CART
-======================================== */
-
-document
-.getElementById("cartButton")
-.addEventListener("click", () => {
-
-document
-  .getElementById("cartPanel")
-  .classList.add("open");
-
-
-});
-
-/* ========================================
-CLOSE CART
-======================================== */
-
-document
-.getElementById("closeCart")
-.addEventListener("click", () => {
-
-document
-  .getElementById("cartPanel")
-  .classList.remove("open");
-
-
-});
-
-/* ========================================
-CHECKOUT
-======================================== */
-
-document
-.getElementById("checkoutBtn")
-.addEventListener("click", () => {
-
-/* Check if cart is empty */
-
-if (cart.length === 0) {
-
-  alert("Your cart is empty.");
-
-  return;
-
-}
-
-
-/* Close cart */
-
-document
-  .getElementById("cartPanel")
-  .classList.remove("open");
-
-
-/* Open fortune test */
-
-openFortune();
-
-
-});
-
-/* ========================================
-OPEN FORTUNE WINDOW
-======================================== */
-
+// Open fortune modal
 function openFortune() {
 
-const overlay =
-document.getElementById("fortuneOverlay");
+  fortuneOverlay.classList.add("show");
 
-const fortuneScreen =
-document.getElementById("fortuneScreen");
+  fortuneScreen.style.display = "block";
+  blockedMessage.style.display = "none";
 
-const blockedMessage =
-document.getElementById("blockedMessage");
+  fortune = 100;
 
-/* Show overlay */
-
-overlay.classList.add("show");
-
-/* Show normal fortune screen */
-
-fortuneScreen.style.display = "block";
-
-/* Hide blocked message */
-
-blockedMessage.style.display = "none";
-
-/* Start fortune countdown */
-
-startFortuneDecay();
-
-}
-
-/* ========================================
-FORTUNE DECAY
-======================================== */
-
-function startFortuneDecay() {
-
-/* Stop any previous timer */
-
-clearInterval(fortuneTimer);
-
-/* Start new timer */
-
-fortuneTimer = setInterval(() => {
-
-fortune -= 1;
-
-
-/* Prevent negative fortune */
-
-if (fortune <= 0) {
-
-  fortune = 0;
-
-  clearInterval(fortuneTimer);
+  updateFortune();
 
 }
 
 
-/* Update screen */
-
-updateFortune();
-
-
-}, 1000);
-
-}
-
-/* ========================================
-UPDATE FORTUNE DISPLAY
-======================================== */
-
+// Update fortune display
 function updateFortune() {
 
-const bar =
-document.getElementById("fortuneBar");
+  fortuneValue.textContent = `Fortune: ${fortune}%`;
 
-const value =
-document.getElementById("fortuneValue");
-
-/* Update percentage text */
-
-value.textContent =
-Fortune: ${fortune}%;
-
-/* Update progress bar */
-
-bar.style.width =
-fortune + "%";
-
-/* Change bar color */
-
-if (fortune > 60) {
-
-bar.style.background =
-  "#4caf50";
+  fortuneBar.style.width = `${fortune}%`;
 
 
-}
+  // Change bar colour
+  if (fortune >= 70) {
 
-else if (fortune > 30) {
+    fortuneBar.style.background = "#7bc96f";
 
-bar.style.background =
-  "#ff9800";
+  } else if (fortune >= 40) {
 
+    fortuneBar.style.background = "#f0b44d";
 
-}
+  } else {
 
-else {
+    fortuneBar.style.background = "#d9534f";
 
-bar.style.background =
-  "#d32f2f";
-
-
-}
-
-}
-
-/* ========================================
-TRY AGAIN BUTTON
-======================================== */
-
-document
-.getElementById("tryAgain")
-.addEventListener("click", () => {
-
-/* Increase attempt count */
-
-attempts++;
+  }
 
 
-/* Every attempt reduces fortune */
-
-fortune -= 10;
-
-
-/* Prevent negative fortune */
-
-if (fortune < 0) {
-
-  fortune = 0;
-
-}
-
-
-/* Select random bad fortune */
-
-const randomIndex =
-  Math.floor(
-    Math.random() *
-    badFortunes.length
+  // Find appropriate message
+  const selectedFortune = fortunes.find(
+    item => fortune >= item.min
   );
 
-
-/* Display random message */
-
-document
-  .getElementById("fortuneMessage")
-  .textContent =
-  badFortunes[randomIndex];
-
-
-/* Update fortune */
-
-updateFortune();
-
-
-/*
-  After 5 attempts,
-  checkout becomes blocked.
-*/
-
-if (attempts >= 5) {
-
-  showBlocked();
+  fortuneMessage.textContent = selectedFortune.message;
 
 }
 
 
-});
+// Try fortune again
+tryAgain.addEventListener("click", function () {
 
-/* ========================================
-BLOCK CHECKOUT
-======================================== */
+  // Randomly reduce fortune
+  const loss = Math.floor(Math.random() * 26) + 10;
 
-function showBlocked() {
+  fortune -= loss;
 
-/* Stop fortune timer */
+  if (fortune < 0) {
+    fortune = 0;
+  }
 
-clearInterval(fortuneTimer);
-
-/* Hide fortune screen */
-
-document
-.getElementById("fortuneScreen")
-.style.display = "none";
-
-/* Show blocked message */
-
-document
-.getElementById("blockedMessage")
-.style.display = "block";
-
-}
-
-/* ========================================
-LEAVE FORTUNE
-======================================== */
-
-document
-.getElementById("giveUp")
-.addEventListener("click", () => {
-
-/* Stop timer */
-
-clearInterval(fortuneTimer);
+  updateFortune();
 
 
-/* Close fortune window */
+  // Block checkout when fortune reaches zero
+  if (fortune === 0) {
 
-document
-  .getElementById("fortuneOverlay")
-  .classList.remove("show");
+    setTimeout(() => {
 
+      fortuneScreen.style.display = "none";
+      blockedMessage.style.display = "block";
+
+    }, 700);
+
+  }
 
 });
 
-/* ========================================
-RETURN TO BAKERY
-======================================== */
 
-document
-.getElementById("backToShop")
-.addEventListener("click", () => {
+// Give up
+giveUp.addEventListener("click", function () {
 
-/* Close fortune window */
-
-document
-  .getElementById("fortuneOverlay")
-  .classList.remove("show");
-
+  fortuneOverlay.classList.remove("show");
 
 });
+
+
+// Return to bakery
+backToShop.addEventListener("click", function () {
+
+  fortuneOverlay.classList.remove("show");
+
+});
+
+
+// =========================
+// CHECKOUT
+// =========================
+
+const checkoutBtn = document.getElementById("checkoutBtn");
+
+checkoutBtn.addEventListener("click", function () {
+
+  // Don't allow checkout with empty cart
+  if (cart.length === 0) {
+
+    alert("Your cart is empty! Add something delicious first.");
+
+    return;
+  }
+
+
+  // Close cart
+  cartPanel.classList.remove("open");
+
+
+  // Open fortune test
+  openFortune();
+
+});
+
+
+// =========================
+// INITIAL STATE
+// =========================
+
+updateCart();

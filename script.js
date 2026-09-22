@@ -307,42 +307,88 @@ function updateFortune() {
 // TRY FORTUNE
 // =========================
 
+// =========================
+// TRY YOUR FORTUNE
+// =========================
+
 tryAgain.addEventListener("click", function () {
 
   fortuneAttempts++;
 
+  // =========================
+  // COOKIE ANIMATION
+  // =========================
 
-  /*
-    Fortune decreases slowly.
+  const cookie = document.querySelector(".cookie");
 
-    First few attempts:
-    5–10%
+  cookie.classList.remove("magic");
 
-    Later attempts:
-    6–12%
+  // Restart animation every click
+  void cookie.offsetWidth;
 
-    This makes the fortune system last longer.
-  */
-
-  const minimumLoss = 5;
-  const maximumLoss = 10;
-
-  const loss =
-    Math.floor(
-      Math.random() *
-      (maximumLoss - minimumLoss + 1)
-    ) + minimumLoss;
+  cookie.classList.add("magic");
 
 
-  fortune -= loss;
+  // =========================
+  // RANDOM FORTUNE EVENT
+  // =========================
+
+  const randomEvent = Math.random();
 
 
-  if (fortune < 0) {
-    fortune = 0;
+  // 🍀 LUCKY EVENT
+  // 12% chance
+  if (randomEvent < 0.12) {
+
+    fortune += 7;
+
+    if (fortune > 100) {
+      fortune = 100;
+    }
+
+    fortuneMessage.textContent =
+      "🍀 LUCKY! A mysterious force has blessed your pastry. +7%";
+
   }
 
 
-  // Change button after first attempt
+  // 💀 UNLUCKY EVENT
+  // Next 8% chance
+  else if (randomEvent < 0.20) {
+
+    fortune -= 12;
+
+    if (fortune < 0) {
+      fortune = 0;
+    }
+
+    fortuneMessage.textContent =
+      "💀 UNLUCKY! You looked at the baguette incorrectly. -12%";
+
+  }
+
+
+  // 🥐 NORMAL RESULT
+  // Remaining 80%
+  else {
+
+    // Slow decrease: 5–8%
+    const loss =
+      Math.floor(Math.random() * 4) + 5;
+
+    fortune -= loss;
+
+    if (fortune < 0) {
+      fortune = 0;
+    }
+
+  }
+
+
+  // =========================
+  // CHANGE BUTTON TEXT
+  // =========================
+
   if (fortuneAttempts === 1) {
 
     tryAgain.textContent = "🔮 Try Again";
@@ -350,7 +396,72 @@ tryAgain.addEventListener("click", function () {
   }
 
 
+  // =========================
+  // UPDATE DISPLAY
+  // =========================
+
   updateFortune();
+
+
+  // =========================
+  // KEEP SPECIAL MESSAGE
+  // =========================
+
+  /*
+    updateFortune() normally replaces
+    fortuneMessage with a normal message.
+
+    So if a special event happened,
+    put the special message back after
+    updating the percentage.
+  */
+
+  if (randomEvent < 0.12) {
+
+    fortuneMessage.textContent =
+      "🍀 LUCKY! A mysterious force has blessed your pastry. +7%";
+
+  }
+
+  else if (randomEvent < 0.20) {
+
+    fortuneMessage.textContent =
+      "💀 UNLUCKY! You looked at the baguette incorrectly. -12%";
+
+  }
+
+
+  // =========================
+  // LOW FORTUNE WARNING
+  // =========================
+
+  if (fortune <= 20 && fortune > 0) {
+
+    fortuneMessage.textContent =
+      "⚠️ Your fortune is hanging on by a single crumb.";
+
+  }
+
+
+  // =========================
+  // FORTUNE REACHES ZERO
+  // =========================
+
+  if (fortune <= 0) {
+
+    tryAgain.disabled = true;
+
+    setTimeout(function () {
+
+      fortuneScreen.style.display = "none";
+
+      blockedMessage.style.display = "block";
+
+    }, 900);
+
+  }
+
+});
 
 
   // =========================

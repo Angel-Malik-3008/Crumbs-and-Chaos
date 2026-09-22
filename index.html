@@ -278,6 +278,105 @@
     </div>
 
   </div>
+  <script src="script.js"></script>
+
+<!-- =========================
+     RECEIPT MODAL
+========================= -->
+
+<div class="overlay" id="receiptOverlay">
+
+  <div class="receipt-box">
+
+    <div class="receipt">
+
+      <h2>🥐 CRUMB & DOOM</h2>
+
+      <p class="receipt-subtitle">
+        Extremely Legitimate Bakery
+      </p>
+
+      <div id="receiptItems"></div>
+
+      <div class="receipt-line"></div>
+
+      <div class="receipt-total">
+        TOTAL: ₹<span id="receiptTotal">0</span>
+      </div>
+
+      <div class="receipt-line"></div>
+
+      <p>
+        Fortune at checkout:
+        <strong><span id="receiptFortune">0</span>%</strong>
+      </p>
+
+      <p>
+        Payment status:
+        <strong>QUESTIONABLE</strong>
+      </p>
+
+      <p class="receipt-message">
+        Thank you for your completely
+        imaginary purchase.
+      </p>
+
+      <p class="receipt-footer">
+        100% baked goods.<br>
+        0% financial responsibility.
+      </p>
+
+    </div>
+
+    <div class="receipt-buttons">
+
+      <button id="printReceipt">
+        🖨️ Print Receipt
+      </button>
+
+      <button id="closeReceipt">
+        Return to Bakery
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- =========================
+     FAKE CHECKOUT MODAL
+========================= -->
+
+<div class="overlay" id="checkoutOverlay">
+
+  <div class="checkout-box">
+
+    <div class="checkout-spinner">
+      🥐
+    </div>
+
+    <h2 id="checkoutTitle">
+      Processing Payment...
+    </h2>
+
+    <p id="checkoutMessage">
+      Contacting the bakery accountant.
+    </p>
+
+    <div class="checkout-progress">
+
+      <div id="checkoutProgressBar"></div>
+
+    </div>
+
+    <p id="checkoutStatus">
+      0%
+    </p>
+
+  </div>
+
+</div>
 
 
   <!-- BLOCKED SCREEN -->

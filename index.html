@@ -1,420 +1,2739 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Crumb & Doom Bakery</title> <!-- Connect CSS --> <link rel="stylesheet" href="style.css" /> </head> <body> <!-- HEADER --> <header> <div> <h1>🥐 Crumb & Doom</h1>
-  <p>
-    The bakery that may or may not let you buy anything.
-  </p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<button id="cartButton">
-  🛒 Cart (<span id="cartCount">0</span>)
+<title>Crumb & Chaos Bakery 🧁</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --pink: #ff70aa;
+  --pink-dark: #ff3f91;
+  --cream: #fff9f2;
+  --yellow: #ffe66d;
+  --brown: #39252c;
+  --muted: #806c73;
+  --green: #a8e6cf;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 5% 10%, #ffdce9 0 7%, transparent 8%),
+    radial-gradient(circle at 95% 15%, #ded1ff 0 7%, transparent 8%),
+    radial-gradient(circle at 15% 80%, #fff0a8 0 5%, transparent 6%),
+    var(--cream);
+  color: var(--brown);
+  font-family: "DM Sans", sans-serif;
+}
+
+/* ================= HEADER ================= */
+
+header {
+  background: #ffb8d4;
+  border-bottom: 4px solid var(--brown);
+  padding: 35px 20px 25px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: "✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦";
+  position: absolute;
+  top: 7px;
+  left: 0;
+  width: 100%;
+  font-size: 18px;
+  opacity: .5;
+}
+
+.logo {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: -5px;
+  margin: 12px 0 5px;
+}
+
+.tagline {
+  font-weight: 700;
+}
+
+.tagline span {
+  display: inline-block;
+  background: white;
+  padding: 6px 13px;
+  border-radius: 100px;
+  transform: rotate(-1deg);
+}
+
+/* ================= CART BUTTON ================= */
+
+.cart-button {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 20;
+
+  background: var(--yellow);
+  color: var(--brown);
+  border: 3px solid var(--brown);
+  border-radius: 100px;
+
+  padding: 12px 18px;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 4px 4px 0 var(--brown);
+  transition: .15s;
+}
+
+.cart-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--brown);
+}
+
+/* ================= INTRO ================= */
+
+.intro {
+  max-width: 1200px;
+  margin: 35px auto 10px;
+  padding: 0 25px;
+}
+
+.intro h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 2.2rem;
+  margin-bottom: 5px;
+}
+
+.intro p {
+  color: var(--muted);
+}
+
+/* ================= FILTERS ================= */
+
+.filters {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 25px;
+
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: white;
+  color: var(--brown);
+
+  border: 2px solid var(--brown);
+  border-radius: 100px;
+
+  padding: 9px 15px;
+
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: .15s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--pink);
+  color: white;
+  transform: rotate(-1deg);
+}
+
+/* ================= FOOD GRID ================= */
+
+.bakery {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px 25px 60px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+  gap: 22px;
+}
+
+.item {
+  background: white;
+
+  border: 3px solid var(--brown);
+  border-radius: 24px;
+
+  padding: 14px;
+
+  box-shadow: 5px 5px 0 var(--brown);
+
+  position: relative;
+
+  transition: .2s;
+}
+
+.item:hover {
+  transform: translateY(-6px) rotate(-1deg);
+}
+
+.item.hidden {
+  display: none;
+}
+
+.badge {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+
+  background: var(--pink);
+  color: white;
+
+  padding: 5px 9px;
+
+  border-radius: 100px;
+
+  font-size: .68rem;
+  font-weight: 700;
+
+  z-index: 2;
+}
+
+/* ================= IMAGE FIX ================= */
+
+.food-image-wrapper {
+  width: 100%;
+  height: 175px;
+
+  overflow: hidden;
+
+  border-radius: 16px;
+  border: 2px solid var(--brown);
+
+  background: linear-gradient(
+    135deg,
+    #ffd6e5,
+    #fff0a8
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.food-img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  transition: .3s;
+}
+
+.item:hover .food-img {
+  transform: scale(1.05);
+}
+
+/* fallback image */
+.image-fallback {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 75px;
+
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #fff 0 5%,
+      transparent 6%
+    ),
+    linear-gradient(
+      135deg,
+      #ffd6e5,
+      #fff0a8
+    );
+}
+
+.item h3 {
+  margin: 12px 0 4px;
+
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.15rem;
+}
+
+.description {
+  color: var(--muted);
+  font-size: .82rem;
+
+  min-height: 36px;
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 12px;
+}
+
+.price {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.add-btn {
+  border: 2px solid var(--brown);
+
+  background: var(--pink);
+  color: white;
+
+  border-radius: 100px;
+
+  padding: 8px 13px;
+
+  font-family: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .15s;
+}
+
+.add-btn:hover {
+  background: var(--pink-dark);
+  transform: scale(1.05);
+}
+
+/* ================= CHECKOUT ================= */
+
+.checkout-area {
+  text-align: center;
+  padding: 20px 20px 80px;
+}
+
+.checkout-area p {
+  color: var(--muted);
+}
+
+#checkout {
+  background: var(--green);
+  color: var(--brown);
+
+  border: 3px solid var(--brown);
+  box-shadow: 5px 5px 0 var(--brown);
+
+  padding: 15px 25px;
+
+  border-radius: 100px;
+
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* ================= CART ================= */
+
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(57,37,44,.55);
+
+  z-index: 30;
+
+  display: none;
+}
+
+.cart-overlay.open {
+  display: block;
+}
+
+.cart-drawer {
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  height: 100%;
+  width: min(440px, 94%);
+
+  background: var(--cream);
+
+  border-left: 4px solid var(--brown);
+
+  padding: 25px;
+
+  overflow-y: auto;
+
+  animation: slideIn .3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-header h2 {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.close-cart {
+  width: 38px;
+  height: 38px;
+
+  background: white;
+
+  border: 2px solid var(--brown);
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  font-size: 1.1rem;
+}
+
+.cart-item {
+  background: white;
+
+  border: 2px solid var(--brown);
+  border-radius: 15px;
+
+  padding: 12px;
+
+  margin: 10px 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item small {
+  color: var(--muted);
+}
+
+.remove {
+  background: #ffd0df;
+
+  border: 2px solid var(--brown);
+
+  border-radius: 50%;
+
+  width: 30px;
+  height: 30px;
+
+  cursor: pointer;
+}
+
+.cart-total {
+  border-top: 3px dashed var(--brown);
+
+  margin-top: 20px;
+  padding-top: 15px;
+
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.drawer-checkout {
+  width: 100%;
+
+  margin-top: 20px;
+
+  padding: 15px;
+
+  border: 3px solid var(--brown);
+  border-radius: 100px;
+
+  background: var(--pink);
+  color: white;
+
+  font-family: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 4px 4px 0 var(--brown);
+}
+
+/* ================= FORTUNE ================= */
+
+.fortune-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(57,37,44,.8);
+
+  z-index: 50;
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.fortune-box {
+  width: min(460px, 95%);
+
+  background: var(--cream);
+
+  border: 4px solid var(--brown);
+  border-radius: 30px;
+
+  padding: 30px;
+
+  text-align: center;
+
+  box-shadow: 8px 8px 0 var(--brown);
+
+  animation: pop .35s ease;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(.7) rotate(-4deg);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.fortune-box h2 {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.cookie {
+  font-size: 100px;
+
+  cursor: pointer;
+
+  display: inline-block;
+
+  user-select: none;
+
+  transition: .2s;
+}
+
+.cookie:hover {
+  transform: rotate(8deg) scale(1.1);
+}
+
+.cookie.cracking {
+  animation: crack .55s forwards;
+}
+
+@keyframes crack {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.3) rotate(-12deg);
+  }
+
+  60% {
+    transform: scale(.8) rotate(12deg);
+  }
+
+  100% {
+    transform: scale(0) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+#fortune {
+  display: none;
+
+  background: #ffe6ef;
+
+  border: 3px solid var(--brown);
+  border-radius: 18px;
+
+  padding: 18px;
+
+  font-size: 1.1rem;
+  font-weight: 700;
+
+  margin: 15px 0;
+}
+
+#disabledMessage {
+  display: none;
+}
+
+#disabledMessage strong {
+  font-size: 1.5rem;
+}
+
+.sad-btn {
+  background: var(--brown);
+  color: white;
+
+  border: 0;
+  border-radius: 100px;
+
+  padding: 11px 20px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-weight: 700;
+}
+
+/* ================= 4TH ATTEMPT ================= */
+
+#fourthAttempt {
+  display: none;
+}
+
+.fourth-icon {
+  font-size: 4rem;
+  margin: 5px;
+}
+
+/* ================= TOAST ================= */
+
+#toast {
+  position: fixed;
+
+  left: 50%;
+  bottom: 25px;
+
+  transform: translateX(-50%);
+
+  background: var(--brown);
+  color: white;
+
+  padding: 13px 20px;
+
+  border-radius: 100px;
+
+  display: none;
+
+  z-index: 100;
+
+  font-weight: 700;
+
+  box-shadow: 4px 4px 0 var(--pink);
+}
+
+@media(max-width:600px) {
+
+  .cart-button {
+    top: 12px;
+    right: 12px;
+  }
+
+  header {
+    padding-top: 60px;
+  }
+
+  .logo {
+    letter-spacing: -3px;
+  }
+
+  .bakery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 15px;
+  }
+
+  .food-image-wrapper {
+    height: 135px;
+  }
+
+  .item {
+    padding: 10px;
+  }
+
+  .item h3 {
+    font-size: 1rem;
+  }
+
+  .description {
+    font-size: .75rem;
+  }
+
+  .price {
+    font-size: .9rem;
+  }
+
+  .add-btn {
+    padding: 7px 9px;
+    font-size: .75rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    crumb & chaos 🧁
+  </div>
+
+  <div class="tagline">
+    <span>tiny bakery. huge problems.</span>
+  </div>
+
+</header>
+
+<button class="cart-button" onclick="openCart()">
+  🛒 Cart <span id="cartCount">0</span>
 </button>
 
-</header> <!-- HERO --> <section class="hero">
-<h2>
-  Freshly Baked. Questionably Lucky.
-</h2>
-
-<p>
-  Order delicious things while testing your completely useless fortune.
-</p>
-
-</section> <!-- PRODUCTS --> <section class="products">
-<!-- CROISSANT -->
-<div class="product">
-
-  <div class="product-image">
-    🥐
-  </div>
-
-  <div class="product-info">
-
-    <h3>Butter Croissant</h3>
-
-    <div class="price">
-      ₹120
-    </div>
-
-    <button
-      class="add-btn"
-      onclick="addToCart('Butter Croissant', 120)"
-    >
-      Add to Cart
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- CHOCOLATE CAKE -->
-<div class="product">
-
-  <div class="product-image">
-    🍰
-  </div>
-
-  <div class="product-info">
-
-    <h3>Chocolate Cake</h3>
-
-    <div class="price">
-      ₹550
-    </div>
-
-    <button
-      class="add-btn"
-      onclick="addToCart('Chocolate Cake', 550)"
-    >
-      Add to Cart
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- COOKIE BOX -->
-<div class="product">
-
-  <div class="product-image">
-    🍪
-  </div>
-
-  <div class="product-info">
-
-    <h3>Cookie Box</h3>
-
-    <div class="price">
-      ₹250
-    </div>
-
-    <button
-      class="add-btn"
-      onclick="addToCart('Cookie Box', 250)"
-    >
-      Add to Cart
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- CUPCAKE -->
-<div class="product">
-
-  <div class="product-image">
-    🧁
-  </div>
-
-  <div class="product-info">
-
-    <h3>Vanilla Cupcake</h3>
-
-    <div class="price">
-      ₹100
-    </div>
-
-    <button
-      class="add-btn"
-      onclick="addToCart('Vanilla Cupcake', 100)"
-    >
-      Add to Cart
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- DONUT -->
-<div class="product">
-
-  <div class="product-image">
-    🍩
-  </div>
-
-  <div class="product-info">
-
-    <h3>Glazed Donut</h3>
-
-    <div class="price">
-      ₹90
-    </div>
-
-    <button
-      class="add-btn"
-      onclick="addToCart('Glazed Donut', 90)"
-    >
-      Add to Cart
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- BAGUETTE -->
-<div class="product">
-
-  <div class="product-image">
-    🥖
-  </div>
-
-  <div class="product-info">
-
-    <h3>French Baguette</h3>
-
-    <div class="price">
-      ₹160
-    </div>
-
-    <button
-      class="add-btn"
-      onclick="addToCart('French Baguette', 160)"
-    >
-      Add to Cart
-    </button>
-
-  </div>
-
-</div>
-
-</section> <!-- FOOTER --> <footer>
-<p>
-  © 2026 Crumb & Doom Bakery
-</p>
-
-<p>
-  100% real baked goods. 0% useful fortune telling.
-</p>
-
-</footer> <!-- CART PANEL --> <div id="cartPanel">
-<div class="cart-header">
+<section class="intro">
 
   <h2>
-    Your Cart
+    Today's bakery menu 🍰
   </h2>
 
-  <button id="closeCart">
-    ×
+  <p>
+    Freshly baked things for people who definitely
+    didn't open this website just to procrastinate.
+  </p>
+
+</section>
+
+<div class="filters">
+
+  <button class="filter-btn active"
+          onclick="filterFood('all', this)">
+    All
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('cakes', this)">
+    🍰 Cakes
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('cupcakes', this)">
+    🧁 Cupcakes
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('cookies', this)">
+    🍪 Cookies
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('pastries', this)">
+    🥐 Pastries
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('donuts', this)">
+    🍩 Donuts
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('bread', this)">
+    🍞 Bread
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('desserts', this)">
+    🍮 Desserts
+  </button>
+
+  <button class="filter-btn"
+          onclick="filterFood('breakfast', this)">
+    🥞 Breakfast
   </button>
 
 </div>
 
 
-<div id="cartItems">
+<main class="bakery" id="bakery">
 
-  <p>
-    Your cart is empty.
-  </p>
+<!-- ================= CAKES ================= -->
+
+<div class="item" data-category="cakes">
+
+<span class="badge">POPULAR</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=700&q=80"
+alt="Chocolate Cake"
+data-emoji="🎂">
+</div>
+
+<h3>Chocolate Cake</h3>
+
+<p class="description">
+Rich chocolate cake with chocolate frosting.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹850</span>
+<button class="add-btn"
+onclick="addToCart('Chocolate Cake',850)">
+Add +
+</button>
+</div>
 
 </div>
 
+
+<div class="item" data-category="cakes">
+
+<span class="badge">NEW</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQA4GqQELYMtC_08_txrB_6iZjuMeFZIDN9c4BuZjM9rjqtQ55BHovA2L0-btzigjR1BLtV6BQFGNLLFF9eDF9pndFS4we-E5ftSu5CU8AybfgOVxsSwEiIUNlmcvoM6woW2l_ReA&usqp=CAc"
+alt="Vanilla Cake"
+data-emoji="🎂">
+</div>
+
+<h3>Vanilla Cake</h3>
+
+<p class="description">
+Soft vanilla sponge with creamy frosting.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹750</span>
+<button class="add-btn"
+onclick="addToCart('Vanilla Cake',750)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cakes">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJkTtHrl-WTIX7M0CO5rmWRBjovtKHs5QPHYi_RNs9WQ&s=10"
+alt="Red Velvet Cake"
+data-emoji="❤️">
+</div>
+
+<h3>Red Velvet Cake</h3>
+
+<p class="description">
+Red velvet sponge with cream cheese frosting.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹900</span>
+<button class="add-btn"
+onclick="addToCart('Red Velvet Cake',900)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cakes">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI_9QzbWanzDqRUYy6tG1CRBII48KeVc9ll7Gm7TnxRktcue-4iEMnJ64Fqy2Do4SI5uNdQozhRL3rIPAJ0n6QAK31qTiTsGAZgLijjJ8&s=10"
+alt="Carrot Cake"
+data-emoji="🥕">
+</div>
+
+<h3>Carrot Cake</h3>
+
+<p class="description">
+Spiced carrot cake with cream cheese frosting.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹780</span>
+<button class="add-btn"
+onclick="addToCart('Carrot Cake',780)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= CUPCAKES ================= -->
+
+<div class="item" data-category="cupcakes">
+
+<span class="badge">FAVOURITE</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVBxNKhLXLHFJ7aRYtdjqt3Qsa3Hqn6R8lNE6ae5isiA&s=10"
+alt="Vanilla Cupcake"
+data-emoji="🧁">
+</div>
+
+<h3>Vanilla Cupcake</h3>
+
+<p class="description">
+Classic vanilla cupcake with buttercream.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹150</span>
+<button class="add-btn"
+onclick="addToCart('Vanilla Cupcake',150)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cupcakes">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6WhB2nu9EKO8jw05xDdyb3kmUU6DwGz6DSUmv-sniFg&s=10"
+alt="Chocolate Cupcake"
+data-emoji="🧁">
+</div>
+
+<h3>Chocolate Cupcake</h3>
+
+<p class="description">
+Chocolate sponge with smooth chocolate frosting.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹170</span>
+<button class="add-btn"
+onclick="addToCart('Chocolate Cupcake',170)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cupcakes">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoDg8AiIohmeb_OYqcvtKQc56rsUdEQGcSjuM1gBsBB1UiJRi6w5t0eeVh&s=10"
+alt="Strawberry Cupcake"
+data-emoji="🍓">
+</div>
+
+<h3>Strawberry Cupcake</h3>
+
+<p class="description">
+Strawberry cake with fresh strawberry frosting.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹180</span>
+<button class="add-btn"
+onclick="addToCart('Strawberry Cupcake',180)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cupcakes">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaVJgmnXntQaFPMXW2KDFyZrPIPlvS5T8W4kEYM9p8jjRjIG6hqi0A1Iw&s=10"
+alt="Red Velvet Cupcake"
+data-emoji="❤️">
+</div>
+
+<h3>Red Velvet Cupcake</h3>
+
+<p class="description">
+Red velvet sponge with cream cheese frosting.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹190</span>
+<button class="add-btn"
+onclick="addToCart('Red Velvet Cupcake',190)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= COOKIES ================= -->
+
+<div class="item" data-category="cookies">
+
+<span class="badge">BESTSELLER</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=700&q=80"
+alt="Chocolate Chip Cookies"
+data-emoji="🍪">
+</div>
+
+<h3>Chocolate Chip Cookies</h3>
+
+<p class="description">
+Crisp edges with soft chocolate-filled centres.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹180</span>
+<button class="add-btn"
+onclick="addToCart('Chocolate Chip Cookies',180)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cookies">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=700&q=80"
+alt="Double Chocolate Cookies"
+data-emoji="🍪">
+</div>
+
+<h3>Double Chocolate Cookies</h3>
+
+<p class="description">
+Chocolate cookie packed with chocolate chips.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹200</span>
+<button class="add-btn"
+onclick="addToCart('Double Chocolate Cookies',200)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cookies">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGUM5oV5rXCwnevjTRSUKVPt0Z7oUKoCb0PRKg_7Su2Q&s=10"
+alt="Oatmeal Cookies"
+data-emoji="🍪">
+</div>
+
+<h3>Oatmeal Cookies</h3>
+
+<p class="description">
+Chewy oatmeal cookies with cinnamon.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹160</span>
+<button class="add-btn"
+onclick="addToCart('Oatmeal Cookies',160)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="cookies">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQazVL746tOiPMQU1Txrmr0ZD3bWXEOoaKw0R5MFZzg7HNjRjy9rZzkp4U&s=10"
+alt="Peanut Butter Cookies"
+data-emoji="🥜">
+</div>
+
+<h3>Peanut Butter Cookies</h3>
+
+<p class="description">
+Soft peanut butter cookies with a rich flavour.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹190</span>
+<button class="add-btn"
+onclick="addToCart('Peanut Butter Cookies',190)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= BROWNIES ================= -->
+
+<div class="item" data-category="desserts">
+
+<span class="badge">GOATED</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQe14SK2azNLieY-gkBHsSdTJhyKlgAKMM_9JTxGb5Vtg&s=10"
+alt="Fudge Brownie"
+data-emoji="🍫">
+</div>
+
+<h3>Fudge Brownie</h3>
+
+<p class="description">
+Dense, rich and extremely chocolatey.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹170</span>
+<button class="add-btn"
+onclick="addToCart('Fudge Brownie',170)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7jJeBsdFZR1RXyDaWalFSy8fVsBOjqfyhT-jbtb83lA&s=10"
+alt="Walnut Brownie"
+data-emoji="🌰">
+</div>
+
+<h3>Walnut Brownie</h3>
+
+<p class="description">
+Chocolate brownie with toasted walnuts.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹200</span>
+<button class="add-btn"
+onclick="addToCart('Walnut Brownie',200)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= DONUTS ================= -->
+
+<div class="item" data-category="donuts">
+
+<span class="badge">POPULAR</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="data:image/jpeg;base64,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"
+alt="Glazed Donut"
+data-emoji="🍩">
+</div>
+
+<h3>Glazed Donut</h3>
+
+<p class="description">
+Classic soft donut with sweet glaze.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹100</span>
+<button class="add-btn"
+onclick="addToCart('Glazed Donut',100)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="donuts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=700&q=80"
+alt="Chocolate Donut"
+data-emoji="🍩">
+</div>
+
+<h3>Chocolate Donut</h3>
+
+<p class="description">
+Chocolate-coated donut with sprinkles.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹130</span>
+<button class="add-btn"
+onclick="addToCart('Chocolate Donut',130)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="donuts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUTEhMVFhUXFRcYFxcVFRUVFxUYFhUWFxcXFhUYHSggGBolHRUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGxAQGi0lHyUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIARMAtwMBEQACEQEDEQH/xAAcAAABBQEBAQAAAAAAAAAAAAAEAQIDBQYABwj/xAA3EAABBAAFAgQFAgUFAAMAAAABAAIDEQQFEiExQVEGEyJhMnGBkbGhwSNCUtHwFBVicvEWJFP/xAAaAQACAwEBAAAAAAAAAAAAAAABAgADBAUG/8QAMBEAAgICAgEEAAQFBQEBAAAAAAECEQMhEjEEEyJBUQUUMmFxgZGh0SOxweHwYkL/2gAMAwEAAhEDEQA/APXgEQDqUIcoQ5QgoKhBwUIKoQ5QgqhBULDRyFko5Sw0daAaEtCwnIEGoEEUCcgQ5QhyhBUSHIEFUIQQPsK5FbRKiA6lCDSFCHIWEcFLJQ5CyUIShyDRwKFho60LCLalkOtSyHKWQ5QhyBBUSHUhRBCFAjSUCChQgtI0Q6lCC0oAga2k9go4kociUJrKHJh4itUtkpEgaiQVAg1zkGw0dyoQ6lCDgoAVEhxCBBhQCKFCChEg4BFAFJUIMJQCIgQcAiQVEAtqEEtQhAXKEHB6hBpQCcCgQlaUyAI5RkIHlIx0SsRQrH2iAVQhyhBCVAiBQg4BQA4BEgjio2QZaUIoCJBQFADgExDiEGQagQ5QII2QHhKpJ9DOLXYpKNgOYULIOKhB0aiIxXFFgGlqARVCDgiQeCiA4lQhwChBwajQBbUIQy4po6opcgtNEEOPY4kA7hHg6sj06YsuLA43SUWLG2TCdtXali8GSByli0PBTAOUIIUCDUAmAwHikEhlbn8rH42KOCFNnay+OpbLPNs4fCGuDdQJ+qvxZIzdMx+gmnRZZNjzK3URStlw/wDyZZYpx7LYBChB1KAGucpYaOChBSoAbagRwKgBwCJBs8oYC48BQiVlb/uYkH8NwT8G+i541DcxGYh+4JtJtaZYsUe0VcuBP9R5tJVGtTT+ADEN/ijQ6nHYo/mPSX7BeCORXJCs1wPIc/UDvv0Q9fkiyMIzjpCS+IWhwa7g9eiTk26SD+W1ZqMJjmuY2itFUqObLC1J2HRSWktIplCiUFOVnIEEUIeE4DN2cj4mnZZ3GMobPQXZfYvN3zNHApUqoqgxxpPRdeGp5dtTgR7KzG9mHyY8XtmwZP7q9ujI8dhDJLCidlLjRGSbQGF1lSwUNEhtSw0OLiiAUEqEHB6lgopswzNr3GMbjqg5Xo14sDrkwHCZaGWW221XLzo4NWW5ILLSl8Flgo3gesfXurMLc1yZJuHUSLMX0CjLQ2JWzD47MXCXU3kLHljzVM6kYJKgXEZyXG3FGMaVEpLoglIkI3VkZOPQpa4DHeU9rXFwZ35H1UeSV2JKCkv3Nrl8uoHckHgrRHi1Zz8keJb4XYUmMWRW7QQHIWVNHKAPnLw9lzp3gimi+Ss9Wdpz4s2kPh0teA99t9tkvp0y5Z7jaNFg8i0A+W4gH60rIcb0Y5tSlciyy/ByDaR19irZ00SWSNaL2BmkUliqRgm+TH0iKIXIEJGtCdIU7SpRLFLQjQCqzzFiONx61sqpukX4Y8pUVOW4MxQmWT4nbgH3Vbxa5Wa/V5z4RWgmCR2gXR3VOLxUpuUt2Wy48tFkMSHM0MILvmt0ZJaiY1FLJyfRl89meDpOx/KpyvZ1sCg1yRicwk02SqaL5ypWUsk+o7I9GWOdstsnY5zq7IJl0Zpm3wmHYG0WWethW6Rz82eSlSNdlmEiDQG77LRFKjBPNke2ObiSCRXp7pZZOI/pWrvZIH3wlu9iyjQ8ORTEaPM8pypsTPLcwah1HVI2mqo7jrtFhhcaA0xzt09ndD9VrgseSPF6Zzsvq4snOO0W+VTsaK1c8WdlPycY/p7KH5cpO5RpFtfCz5Lj2XRaatBjXquMihofrVliUc1lqJWRuh5BRFKyfPYWv8sv9XajtXvwq3linRd6EuPN6QpzeImmyMJ7agp6sX0yvQBmuWSznTYaBR3BN/Kks4TkX48kce6sBzqeYlsIjcS3hwBp23RDJPVM1+JCCTm32ByZgIzoma9p02Njv9UqyGpY1JXFon8Kxhj3StYQH9z+yzTzxxT5NmHJjk3TRfY+Jk5ogEhVyzZPJdYdMOLlhVmAzTw1K972N0jktB6hdLB42ScLfaNGbzYQpfYHlfhV8b2memDpW9lUyj9lcp8fcjY4JrSQCwNI2O3PYoJ8dy6QMsXL3wfZaNy+viNq+HGa5LZm4pvYTA7RuDQVq10GWNS1Qx04DudisGaco54xS7LVC4j8I5zpf+AH6rbTTplGVx467LPQmozWYSPEtLrVHJWd3g0g15YW+oAp7RRTvRzGxP8A4Yq/wrIS+mCWN1bWizwEJbtdhVZ3J9lElGKpKizaUkdGZ7GvnYPicAmtMV60dLmAY8N2ojkmt+lDqnveh44XKLZTZtn74pA+gYw2iBzuqsvLmpJmzB4sZwcX2VuMxRljktsb2bvje7hh2trh+63Phkx8fkxT8bLjyNp6+f8AonmkhAa/zImPrcsa0/t0TYvBlDboqxeZCHtUXILyrFPa3+M8SRl3ok4JvglvRebyeTLx/Llxlyje/wBn/wBHUlFZYqUI8ZV0XAl3I1A/hdafkY4K5vszcNXRRnGRxyyRzOe8H+VzNQ9X9Llvg45MXG0ZckJ48nqY4v8Al1/0RYXLxdQzvHVrJG1fta4/keBglk/VbN2L8Q56nAGxmKnjmDmxkmiC39wrXljg2/4G3HDHOFN6D8Jii8anMII523CfDkk1yKs2KKfFMdj8WAzUG6iOieUtWJDFcqZXTZrYFwuAsb9R9Fny3kg4taZphhSepF5Hig5oo9FbgxrFBRRjlBpsAdixIZIXbGtisOfzJ4c1P9LL1ipKaAGQTRxBu7zwO9LasvOcWyZMkN0afK2Fsbb5rdacs1Kdo5EU0thokSJkcTyCXNgx+oC26uPZZ7XP9j0cU3HZpIsbFOwGJ1Hq0q+fFr2mdp43cuhseXW4Osg+yxZG09MaeWlRosti0jkn5p4OVbZz8s+TDcbP5bC/kgbC6s9BatKYR5OjMeGZ5XzubiHNLd3N/r54schUbjLjfZ0M+OCx8oR2aXH+sigCQtajozYlxWyuwLxIXRTRaXDg7lrh3vunXGSp9mjLFwSnjla+ftEOMwwYLbXBG3BHalXL29D45c9Mys0kbDQaKveh96WfNkyODUXv4NawpbLTF5ux4AZs1oFdP0WDwfGeOLc+2LHFx2+xmVYmeQFjXtDb+Jxr6WtUfwn15vI7a/sZvJ8vxsM1z7+hpzWVk7dmOYLDnPNDsCD1Vs5cXxsz+VwcUuVfsa3BYZgOv0kuHN3t7dgtMMcY7SM0Yx4+0tmwtPxNB7XyE2TDDIqmrK3OS/S6AMZjY4Xva8aQ5ltJ4JqiAe6zwrDOUX+n4/5LoYp5YxcdtMweMzJwA077ql5HWjuRxRu2WDs2Dg01RpMsutlXoU3R0OLdqOkcpXnoEoRrYfgsLbw93KolU5e4onlajxiXcTBdBaY7dIwSdK2HtataRmbEc1EiZ4piIDWyxpnpaIIZJYyNPe9uUzloyeVBuOj0LKrc1p7hUxTezG5OtlnjsV5ERk0l1VsPc1f6rRCKvYkI85cQDD5zFLM1s49LhQFmmk9SR1VkXG6ZZkxShBvH2TeI8kLWgwuDTtpNgXvsLQz4lx+h/F8yK3PolhxWJdA06CJWuAeCK1gc6SdrVUXmePXa/ui3j4/qPfta1+zLxjAQCRVjjstkerZgbp0mUOe+lttIocgnoeyqyG/xnbpmRxUbXRec1zSA6iAdx2WdNP5N7bUqaM/PjCOCikCTIBj5XUNVADgbfdbPzc/TWNaRzfyGJZXlatv7LLBwOYWSSx+drFs1G2AA723v80PGlgi3Kasw58Esr44HTvdm7gZ57RQER0gHRYFfIbKZJKcrgqN+GMvHilN8mXuSskYzQ55fR2JofRMpN9mfyZY5y5RVfYZJhWuBDhtfDhY+xWXL4cJ7TplKySi7Rgc6y4Mne0ChyBfQj/1c6cZY3xbOtizuUEyCKFI5Mfm2WGEkA5SqWyuabLXB274R9VfCEpmaclHsvcJh9IXRxY+KMOTJyYLmOeRxHTu53Zov7q1ND4vFnk30iLCZ6192xze1hJb5V8FkvF49NM8gy/LMUXLLRqjmkvk2GW5E7Yu5U4tgyeRejS4SChSeMaMkpWD+JpvLi08l+wHsNyfx91ZxdpIOFq+T6RUYLLcPJ/Ckn0THcVpLdxt8yrZ4eD4z0yyPmtrnjjcQ3K/D8jXyRYqQSRmiNySQPhI7AKvN5UMcfSmuyyU8c8fKCLrA4VmGcAcQdLjTWvN37C9wnw4Un7P6GT0nO3CPXYVjsQQCBwbTzk0XYcabVmHz2c0dyVlZ2McaMe2BzSQCfUR6QdiemyiirsdzbVEeeR+XNTQWgNFtJvcjdXTjFOkUNq9MDjl3NKsNmx8KZmx0LMM8sB1u0lxJdub2AFBVSyxxt8uvszLxJKcsy6+jWYcPw7vMa1kgPp53BJAAohDx/KjkTnDpaEyJZlwbaCc0jex/mQPERI9THD+E93UGt2n3CunHfOLp/wBjFDx+afHb/uXmXYovjDnt0ur1NsOr5EHcLTCTa32UShKLplJ4jy4yStc016aP0J/usXk4XOdo14MyhCmAN8OuP86qXifuWPy/2DsJ4ea026z81ZHxYoqn5UmXMMTWDoAFpUUjM5OTKnHZvqaXM2YAb6E129lG7VmrF49OpdldBn2He0CNzSSQNJHr35Vb9i5uV/san42S9r/Ar4cXGS5jmvaTs1wqh03C348qUalGzBmwxnK4yaf9g5uBAOwWLiJzCWikegdiM3ISh+DEePczAmLWmyGhgHY8u/I+y34ksUPVl38f5KLlnl6Eeu5P/gzwdpaDTi+xuASbJ5/zssM5ObuR3MWNQjxS0bbw5PK7DtlD/U17/M1cmyD9OCudm8V5/mqb/wCB8np2otdpV/KzQYqEuFvDZoX0SB8TDQ3HY+4Wh4s2KSyQla1aMeOcbqPtmv6P/wB+4QzAWxzQ8u0DbVV10sj5LoT9+yt56mm1V/RlMXgHucaBPQ+1nZZqV0dL8xBab2ZXPYvKcNJ3FbVwQmqmMp2rM3mRmmldLJsT2FDYUKUbMsp06Rd+E8Bqa9z22DTWj+qjZ+mwC0YYRSc59f7iZc03/p4v1P5+l9/4NLmDo3YVxihLcSNLdmkfzD1CtthewVeb080dj/l5RXDlcWv5l1keYOl0Rve0zRuaXCQafMGmvSb5BPbolhhXGou6fyJ6HpQbd018fBrCzo4fhX1qjFfymNdLHE31U1pIF1QsqJJaCo5Mr1till2f/OOiqkt7K5DS1AUkD0RTH59mL3Ygs1UxoGwPJPNrPOXuo63iYY+nyrY5+aQsaPMc1o7FM80YLYV4+ST9okuTapIpo2t0UeBRNjY/JPm8eUoqSFw+ZFOUG9/2LfLHeUfLk3YfhceR1q+ysi60+jP5F5PfHv5QRqS2ZCNyQZDYj6gguwvoxnifCRPx1vFCmgltXdDf57j7K/BH1svptjZMv5fxnlit3/vorcB4mfAXRxNGznDUeu53d9Fg8nxZLPak9HQwShmxqUl2W/hfMIP4rXl3mPJLiCaN8+ngBdCEMKxcr93yZsmTy35HBR/01Vf+7NFl2IZEKGwJr78KiLUTVlxyybLhjxyDTq59lcmjE4vp9AOAk9UupznaXelpAFAjfSa3TRkuOy/NBVGklfyPxWXYedgdpY8D/wDVocWnrzuqI44JXEqUpxlxmv6AEvguF7i5w0ivgaaH9x90E03RHniulYbgstiw4DI46HA2uvmVbVaG5OabTJ34Qk6uRwR0P9ka+SLIkqBcdlEUgt2zhuHDYj3BUr5LMfkTg9BuX4yyxjjqtp0vsevTQP13C0RxSlFyZzvJz445Kj8t2vomzGBskZa/ghZ5pNbNGCcsc1KJ2UQlkQaST8+3RVRk5dg8qalkbSJpU5nQFiJ6BStjJWzzrzyXuLjZLisiez0KilFJDcVEwvY+RpcA4be3ZXYnBTTn0VZvUeOUcfbPQ8Fig4NcBsRsOKC3ZMqm9HFx+O8Sp9hGKisb1SqkWwlTIHG1X2ZxC1Sg2RxM9SVLYW9GM8Uu04p5FGi0i++kJIZnhz80XvEs2D05dP8AyZCcO1Oedi5xcQONzabJl9STl9mzBiWOCivgtslY5zvQ0uIFnSL2HN+yplNR7ZqTSWy7wuZ6T6rIH6KKQZwtA8nizTIDFEXPstJNn02Krpukm8l3B0c/KvIk3jX6TXxZwHhpDNJr1LUsjpfYYePKK9zBcQxvlua1xYHEuO/U8pZJSi4mmLfNN7oZh8XI2MlsvmEj0l3TsAlxwUI+0M8cZT3GivzTxJiGQNJZRB3vr7jtsj5EnkxcVoaHj4VNvstcB4swzqLsSL0BpBGnfmze97oYcrxx4ybf8jkznWuFbssv9ZFMxwila46TsDv9leskZrQMeZc1ZSeF5GOaWSn1Qy6mW6j6tvryFuWd/l1KL/ZmfN4qfmNSjd+5f8mhEvmO0g7NPq/NLmZJ26R0OPpxt9vosYipB7McuhkxVwiKbNZqY75FVZHUWXYlckedyzBrv1tY4ytHfhtBPmEjZ1Hoa/VWJh0n0X2XZyWNOq3UL9Isn6BXQyMy5cEZPWiNvj4j0yYWQe234K2Xj+WUfk/lSL9sqypnNaF80hNZCbDSb7pkKzNeMcCS4SjggNPsRx9/2WXPHfI1ePLXEyU0Qdt/nyVUZUbISrTDPCmL8if1bB21np1G/ZZPxDHKeNOPadl8o8o0MzyRkeIfpfqaXWKqm3vVhaPEk5Y02WJtxV9jsoDXyCh/2PYf3XT8bx3llXx8mDzfNXjwvtvpFu+eJhLYJHSNs+px1G73bY22O30VeaKhJqJp8fJPLjU5qm/gjwjmhznb2424Ekgmvc7KlM0SdoOZjL6UpyF4CySMe3Sd/Yo8tC8GnYA7KYifgFXvsN0BvjYflOAiidqYwB5NX2HXp2RTRVPGn8Ito8CC86QLNE7cHkb90snvRW83GOy7w0YaKH/qCME5OTthMD9ldhaKcioixBVoiM5nZtp+Soy7Row6ZhMYLXPi6Z2ISogixenY9FoTLnsYc5lcdDPQL3cPi27Fb4Zowh7Vv7M/F8rZo4MyLqLnHUBVkCiAOt8ql5G3YfSX0aVxoonEFfIaTWCh0M1DdRMDRT+J8W0x6L3uwL7KjyZuONtGnxoXPZkMBjmzWNg9pII+R+IeyzJNJP7NUluiYxE8plIMZuIDisH26f5srIyNCmpE2HxroojE1tF1+sHej+/S1th5bhj4RX8zDk/D45M/qydr6IsCdDdI2Aqq/dZm7OiguObv3SliYXhJOm57/XsoFhsLqoIWTsLikeT8KVzEbhFbZb4DA9XFLyszZfI1US5gCKZhkOdiGkuja5usDi97I4PZD1YRlxYY45JKbWiTBE1RsEUCr8N8mV567JcStLMyM7m/wkHlUTNGPswMr6eWnvssOSO7OljlqgeWMHdCLosUqBb07rRGRYpJhbMedlYMelyK488gCaauD9ULGoHjxYKCYaM54n5EvtpJHa7FoMuxP4MPm4e2RjmEjqHNNbm+qsik4bLpXei+y/xC002YaTxqHB9yOiySwtbiNf2XLA1w1MLXA9QbCpba0wkb4elVv1pFSHUmgeXD/wCDZOplsMnwyGFrr3N7q2zQkX+HwVN36/juqpzoSeRRLTD4Xej+30VTk2ZpZGyzw8dbAce30UKW7DfNYwEuIA9/126poq+hKb0huAx7cRYjc5lGtekGwDvQPT3WjFHk6YubFLGk3sCzDDN83UCQRW42Jrr9VM+OEu0bME2sdMu8nc4t1uPP69rVuC+Ns5/lcVLivgLmCuMpUY3D3dpJIsjKjDeJ8soamjcbrNOJsxzM7Fir9Ltj+VncKNKlZLIBVKWESLHSRj0EA/T91dGbRdGUZKpHo00h4WlnDQK8HoPuoGwCTDvu9lKJZTZ7jwGFgF9+v6qBRndIe33G3/iqvizXjkmtlfLgzwnUi7iDxB0ZJY5zT3aSPwo6fYONFnB4jxDKDtMg9xR+4/sqngi+ghkfilprzIXN/wCpDvzSR4H8MZBGEz/Ch1u1/LQb/RFQkaY5aiWZ8Y4Yn4ZHH/qAPkLKV4ZN7MzthI8TnRccBq9I1OAF1dbWh6AY4+T7LHwvmU2IlcZ5GxxsGotaKLvYk2T9FZDGm9i+Rj4RXBW2HZrixMba2qNAewO316/VWSkn0izDgeNbZJlU5a0tG36IRk10Nlxpu2WOGwxdz7Wlrm6/qZs2ZQVIvItQFUta0jlyduxJnkVaLYEgeXdTsPRT5lhA8HZVTiWwlRgM7ySrICpo0qRnxO+M04Ejv1Vcsf0Wxn9hMOIa7ggqtprssUk+j1RsZHRb0cpsgxTXAdK/zlRkRUYss6n7FCxigzZ7KoAfqULGRQyOLaI6JZKx4yomgla++h+ao3E0xnrRz8JfyrekVkLVL7IDl47lN6g9of8A7X72VOYbQXluQMeyQku8xotrdqIH+H7K+FSTGSvoiy7KY7uRjnOv5Nr6laMGXBBe9Wzn+Z43lZHWKVI1MkbdDAIw0NPTeyev4+yp8nPCcriqRr8Lx54Yf6krYplZENVHauGk39Vk9SNm1SUtJhwxAcPT3+/ujYOIblkLrsjnj5KbM/k5lFUjUYfDim/Pf9v1V8YJJUceU227LJXlBzmhGgWDPgrhChrApoDd9ErQyZXYvLtXPCSUCyMzMZnkLTeyqcS5TMtj/DW/pNHvx9EBrPT5SOiv/gZEBzyEd0LDRVY3D6vZRjIzuMwh6lKNZVSR70UAgGIwxBtpIPsg99jLQ6HMnM+ME+4/sqpYr6LVl+yxgzGN38w+u35VLhJfBdGcX8lhhmtoEEfp+UtsakGYRuhwczm+/PtXVWY8rhKxoOmWMmFaXEsFN6C+Ntx97QyZIuT49Bc5N9kxEbBb3gWepsqu2+itvewWfMYSNLQZDxxQ+5UWNvsiyV0E5Vl5O9UOwV0Yhl5U0a7A4UALRGBgyZG3ZYhtD6j8q6im7DeQreynoaoE4hQALimpJDxGEWApeg/IHNhAeQl4pjKTQFJlwHT9ErghlNgrlCEE6jIgeThAJX4rDWFAlLNl5tKEifgx1G6gUBy5cT02QsYFOSEnZCwhA8OkdEBlRPH4ced6O3z2/sgG0WGU+HXucS4u9gXGrS1YXKi9wfhT+r9Eyg2I8iRZ4TJWN2pFQA8hdYfChu1UrFFIpcmw2EWrFsreiYxmh801C2OilN+yKeyNBBKYQaoEhxG+yWQYisbtSiRLGuiUaImRuiUoNlS5vZVjDXwDt+iNEsGdhUKG5ED8LaUNgU2H5oIP9hkA/wC3Xul2NaJP9ttKNYbhstYxtkWSfsmpULbsKiw7ewUQGyXyOnRSg2EYbDaSOPkio0xXK0WOj0kntwrK0V3sZBGgkFsMMdtT1oS9j4W7IojJdXQI2KRxiiFFoL2EMTIViSOAQeiIjAQQWx7gmYo20LDRDi8YyJodI4NBNddzzQr5FLPJGCuQaKqeGhaRqh07JY49k6QrY2RiDCQPj2SMdEDoktDWDSQINBTOYw7KUSwqOK9ijVguiZsVcJkqFuyRjOLUoliRDW/bpsPogtsL0iwDLsWraK7OYwhRIjZIGogO1k8fXoluw1QRG2h90yVIVvYxw3UCSMOyKFYjjdqBGx3aCIymzTxNHGS1n8R4JBa09RyFVPLT4xVsii26RBgs4kmiss8skm7u6TxtrZqhh4v3lRnWTvxDa811bV0o9SPwo8aktl8lGSpo1JOpu3+fNG7Rz+mcdlLIRvFoMKEcxBoKZGY0KDYySHZRkTB/INgJaGsn0kcJuhSVgURBZjQ91JERHluxvsDf1S4xplpGQSrUypjzGUaBZDK7oEkv2GRNA0AApopJAk2yR7967JmwJCE+yBDhKVLJQrjt0RIUGY55y2M7/wBQ/ZVOf0bsPiX7plTl2WxxW6vU424nckk2bPzRiqL5JN+1BGYPdp0tdpcdga4KdyUdsEYcrK+N2YQ0XaJGlbMfn4csf0/0OU/w6an7Mr/gzTw0AsER2L9SoQcPff8ARQIpKhBBR6oEHaUSClo4UIN8lSiWK6Pso0RMGx5IAHdJN6Gh2EYCGmfPdNBVEE3bJiEWALifbT7J07QjVMGa0jhIrGDo27UrUtFbYMRVg9Eo4gegQaXqEKPxLm5FQs3c74q6Dslk29I2+Hgt85dGbxkpgaHuLQCeS4bE9+yPoT66OknGWi1weeOc22xxvH/AgrNPxvMh8plDxYr7aFzGc4iL0x+W9u4PdBQy5YOOQkFHDO07QPg8TM1tS8dgh4vjehe+yzJwn+k0eoLVo4gmpQI8OUAN8xCxqFaoAmjRQAlm6dCsUj2UINO6gQGQ+Y8AbUfpQ/wqpvlIsriiwY3c1wraKyNzLPIS0Gxoc5p/KG0TTJcNJfO1JouwSQW1ysEGYlnVBoKYE5yQcoPEudCENaCA955P8oHJVU3tRXbNvh4PUblLpGa/17p5dMNanHd5/Za4KMXUezo1GEf4CY3wq5wLJSXXzuq58r2VvMpIFyrw1LhZmuikphPqa6yCPZWxyySpipxadm/EOoAt4StGW60ynzgjhrrI+Ie/RVTNGG+2v4FwCqzlnKEHAokGlAgupQhI2RGyUF4SQkkeyeLEkh55RIdiDTUJaRF2DYCPcnsEmNbHm9BysKxulQINI4qtsZBLI6G3NqxKkI3smtMAc9FgRVYgFpo/RVtFiZ5l4laZ8S92oFrQAB122WfV2dfB7YKIPA8sLXM/lNq6Eqdl2uj0LD5gyZrXD4q3tXzmpdGR43B/sEuiBadQ27oWJbvRVYSKWAl0ThJCTZaTx/1KbHkTVfBok4z1NU/sbm0oezzIxYunCvUD7hJlx6tDYocXTLeErOjksJDQrBBrmIUGxhYgSxulAJzXKBDcGRR7p4iSJw1MAgxR3ASSGiSRMoJkqQG7HWiAimk6D6pZP4CkSQM23+iMVoDYhcR81CDo5rRTA0OdImsFFP4ixWiCR/UNNfM7Kub0XYY3NI8siYfVIeSCs17Oly2T5TISPVyrrL4mkwuJDRspYZRs1GSyebhiHb3aowZG8jTMeePDImighLsJLoffkvPpP9J7fJWOLxTtdM12s8P/AKRJneHkicJo6pwo1we1haucoC4MkZLg/gt2OpZkzktBsTlYmVsmc1MAjLUoSKZqVjIEakQ4TBJSdOhGg6GcdSrFJCNMa1wO5QCTs3CcUgkfXzSN0MkQwR25LFWxpPQdqVpWDyuSMZEUL/UhHsjHyvTgKLPsQPKc1+4cCFVN6LsXdowNUwDsst7Nt7BIn04b1utCNMWX0TrG3KI/JfJdZBmUkVxPHpO4IVWPHWS1s5/leRiSu9l7jC18eogOaN91v42tiYpPtFXjsw8xgazf26ADurnGEY+414sbjK2T4zHNYCdjXIB3Huua4Tq0jJixc3T0FQ45tAjcEdE0JWrJPxZJ0SDOLOljC49grE7dCvx+KuTAMf4j8r44Xj5g0ulj8LHJW5nIy+TlUqhBsPgzNr4xIBsVR5Pi+ltdGjw8q8h8emR6weD91gaOi8E0OLCpRS1XY5qhCQEqAC8FIaN9E8WJJCOdqNqXZKonw7K3TxVCtivduoAHmPZKxkDxSbpU9haHzOVgDO50A4EFVS2Ww0YnXyFk+TWVuJdpNq+DLovQjsY/RbXUe6tSsk3caDcHnskJa4v1Hre9+y7PjRwYMe+2eTzYc+fyEoaij07KsxYY2eZVO3pZs8o9nf8ASnCNR7Re4cwNbtG1o+QFrDLyYLRVwzS7Z5//APGWR/xDM54cOpSYPKlmidJNp1RLgzpbpHwjhP6biui2W3YO/EPjeHxH1Hau6keTdRKc0IuPv6LSDxZIHiKeH1H5G1bknLF+tHPh40cu8bGf74yR74WRmMk7Cq37rfCUc2NRsx+jLxcryvouY42hmk8nkpc2OEIVQ3jeRly5ud6Csmy4EH1HSPyufDGjo+T5PSrYzWNRB6HlVtbDLDcbQQ1ilGWSa7EbDsRfKlAsdhYzdO+6MF9gk/oMeKVjEQM9yUJGXqBBpRvY2KVhQ6R1j3TAM3ng2VUi2JhtVEjsVmktmqL0QYtl9E0WWRdFXipBs2tloiyxh2CwDCzunc2JHGkzYeE4zqaH6tI42NLJ5OVpUXS/To0GaZ02N38QODeAaNIYYqK5SWzLklwjoxuf4HG4cBriNPQgkhdSDjiWkPDOsu4lr4UgDoXP1lzuoKslc42WSbVAgkLp2tHQ7qeDjvJf0c/8VzcMNL5BfEmYluIY69mEJfxJcvaifhC4QTfyEZrj3OeyWBwut1n8XM8Rs8rxY5lxZY4bOHBtyHc/omy53N2yYfFhijUTb4PNoWxNYxwJI7qPLFKjEsGSc3Jor5sZGH6SaJXP8zyvQVpWdDHCTVh8B6tcCs+D8Txz09FWSF9oIY611E0YZwcWPaihCZ7rCYUFcEoxC4pQkMjlCAchpKMBY0ago9hWjB5xDoffQqmaL4MCc+wqi4CkYB0V0ZFidksOMobfZWrYW6N5gs4nbAHlrRQ46oZfwrJx58jDHz8MsvppAuI8WGeMsdGORz7LLjw5F+pm5wh8Fj41mcYwCV0Zsy+IlTM14Dld5z23tXCvwdGt/oC8EP8A7UnsTS2+EtyOD+Mv9KKXNjcjr33XP8l/6jOr4qSxRJcDsspsQXidwoMN8OOP+pAvoqMvaLI/pZsszw7XUXC1olCMo7RlhJp6G5e2nAC6+ZWP8ph5r2osnN8TRQndbmqMOVe0KCJjExBUkREIKCCyOTlBkIZFGRAMqQcEl4UIZXxK30lJIsh2ZmErOaRr+qeIUCccbbrRBjS6Lz/VvLQC40ulmySeNKzleLhgsraWyLWQ4Uf8pcvJ+lnZif/Z"
+alt="Strawberry Donut"
+data-emoji="🍓">
+</div>
+
+<h3>Strawberry Donut</h3>
+
+<p class="description">
+Strawberry glaze with colourful sprinkles.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹140</span>
+<button class="add-btn"
+onclick="addToCart('Strawberry Donut',140)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="donuts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://inbloombakery.com/wp-content/uploads/2022/09/Cinnamon-Donuts-FI.jpg"
+alt="Cinnamon Donut"
+data-emoji="🍩">
+</div>
+
+<h3>Cinnamon Donut</h3>
+
+<p class="description">
+Sugar-coated donut with cinnamon.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹120</span>
+<button class="add-btn"
+onclick="addToCart('Cinnamon Donut',120)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= PASTRIES ================= -->
+
+<div class="item" data-category="pastries">
+
+<span class="badge">FANCY</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=700&q=80"
+alt="Butter Croissant"
+data-emoji="🥐">
+</div>
+
+<h3>Butter Croissant</h3>
+
+<p class="description">
+Flaky pastry made with layers of butter.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹200</span>
+<button class="add-btn"
+onclick="addToCart('Butter Croissant',200)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="pastries">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=700&q=80"
+alt="Pain au Chocolat"
+data-emoji="🥐">
+</div>
+
+<h3>Pain au Chocolat</h3>
+
+<p class="description">
+Flaky pastry filled with dark chocolate.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹240</span>
+<button class="add-btn"
+onclick="addToCart('Pain au Chocolat',240)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="pastries">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe6MEWvq0ThcBAwFDoGPbh7mzmoYqci9EJm1Go58CZTg&s=10"
+alt="Apple Turnover"
+data-emoji="🍎">
+</div>
+
+<h3>Apple Turnover</h3>
+
+<p class="description">
+Golden pastry filled with cinnamon apples.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹220</span>
+<button class="add-btn"
+onclick="addToCart('Apple Turnover',220)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="pastries">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=700&q=80"
+alt="Fruit Danish"
+data-emoji="🥐">
+</div>
+
+<h3>Fruit Danish</h3>
+
+<p class="description">
+Flaky pastry topped with fruit and cream.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹230</span>
+<button class="add-btn"
+onclick="addToCart('Fruit Danish',230)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= BREAD ================= -->
+
+<div class="item" data-category="bread">
+
+<span class="badge">FRESH</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZwbwQvnhrfT8jptr9Qejj4S8G9gOKza_pbwRtzEnBow&s=10"
+alt="Sourdough Bread"
+data-emoji="🍞">
+</div>
+
+<h3>Sourdough Bread</h3>
+
+<p class="description">
+Crusty sourdough loaf with a chewy centre.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹280</span>
+<button class="add-btn"
+onclick="addToCart('Sourdough Bread',280)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="bread">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlHNvxFbK83PZuF0-JTwM4oEzDKt_x2qTiBYYngmSP2Q&s=10"
+alt="French Baguette"
+data-emoji="🥖">
+</div>
+
+<h3>French Baguette</h3>
+
+<p class="description">
+Crisp crust with a soft, airy centre.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹220</span>
+<button class="add-btn"
+onclick="addToCart('French Baguette',220)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="bread">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_zmKPN7fU1u36GNdV1NisrLt6CSa68WTpjz9SSUII8w&s=10"
+alt="Milk Bread"
+data-emoji="🍞">
+</div>
+
+<h3>Milk Bread</h3>
+
+<p class="description">
+Soft, slightly sweet and wonderfully fluffy.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹180</span>
+<button class="add-btn"
+onclick="addToCart('Milk Bread',180)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="bread">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0gXW47d6Ra1uVlcm2Wt2KPXblD8NjOXRUkuVsfTCfaw&s=10"
+alt="Garlic Bread"
+data-emoji="🧄">
+</div>
+
+<h3>Garlic Bread</h3>
+
+<p class="description">
+Toasted bread with garlic butter and herbs.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹190</span>
+<button class="add-btn"
+onclick="addToCart('Garlic Bread',190)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= DESSERTS ================= -->
+
+<div class="item" data-category="desserts">
+
+<span class="badge">FAVOURITE</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVveK3anZ5RwN95ZnLmBUdlMv0UBk7eNeFc76wrigzjg&s=10"
+alt="Macarons"
+data-emoji="🌈">
+</div>
+
+<h3>Macaron Box</h3>
+
+<p class="description">
+Assorted colourful French macarons.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹420</span>
+<button class="add-btn"
+onclick="addToCart('Macaron Box',420)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTB2HOc44kLWUHoEFdf4hMi22kUqVNAdwd56zZqn8MQeA&s=10"
+alt="Cheesecake"
+data-emoji="🍰">
+</div>
+
+<h3>Cheesecake</h3>
+
+<p class="description">
+Creamy cheesecake with a buttery biscuit base.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹320</span>
+<button class="add-btn"
+onclick="addToCart('Cheesecake',320)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=700&q=80"
+alt="Tiramisu"
+data-emoji="☕">
+</div>
+
+<h3>Tiramisu</h3>
+
+<p class="description">
+Coffee-soaked layers with mascarpone cream.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹350</span>
+<button class="add-btn"
+onclick="addToCart('Tiramisu',350)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuY8vnKvIqmeziSmOFajIj5rjWHXYDCoxtFS9IKetJJw&s=10"
+alt="Fruit Tart"
+data-emoji="🍓">
+</div>
+
+<h3>Fruit Tart</h3>
+
+<p class="description">
+Crisp pastry filled with cream and fresh fruit.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹290</span>
+<button class="add-btn"
+onclick="addToCart('Fruit Tart',290)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc_Tes8utaIdPsfof21KxdKzSvOk-OA3LHdoIO0KWBKg&s=10"
+alt="Panna Cotta"
+data-emoji="🍮">
+</div>
+
+<h3>Panna Cotta</h3>
+
+<p class="description">
+Silky vanilla dessert with berry sauce.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹270</span>
+<button class="add-btn"
+onclick="addToCart('Panna Cotta',270)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjEtXiKm36PumpkpXwRfpnU_VJ03JQedBJN7q4E6DYXvHuo9OtFOMauJIg&s=10"
+alt="Rice Pudding"
+data-emoji="🍚">
+</div>
+
+<h3>Rice Pudding</h3>
+
+<p class="description">
+Creamy rice pudding with cinnamon.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹180</span>
+<button class="add-btn"
+onclick="addToCart('Rice Pudding',180)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= BREAKFAST ================= -->
+
+<div class="item" data-category="breakfast">
+
+<span class="badge">BREAKFAST</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=700&q=80"
+alt="Pancakes"
+data-emoji="🥞">
+</div>
+
+<h3>Pancake Stack</h3>
+
+<p class="description">
+Fluffy pancakes with butter and maple syrup.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹240</span>
+<button class="add-btn"
+onclick="addToCart('Pancake Stack',240)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="breakfast">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVVQ-0NZ8DwuY0q9ok8vq_tGufM7lJPzcdkUrE84Gdiw&s=10"
+alt="French Toast"
+data-emoji="🍞">
+</div>
+
+<h3>French Toast</h3>
+
+<p class="description">
+Golden brioche with berries and maple syrup.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹260</span>
+<button class="add-btn"
+onclick="addToCart('French Toast',260)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="breakfast">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq4UkznLRB9ctBkHLBgeAJlKI9F2z4dcr_oEw4_7dG7g&s=10"
+alt="Avocado Toast"
+data-emoji="🍳">
+</div>
+
+<h3>Avocado Toast</h3>
+
+<p class="description">
+Toasted sourdough with creamy avocado.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹290</span>
+<button class="add-btn"
+onclick="addToCart('Avocado Toast',290)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="breakfast">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://www.justataste.com/wp-content/uploads/2014/09/fried-egg-sandwich-2024.jpg"
+alt="Breakfast Sandwich"
+data-emoji="🥪">
+</div>
+
+<h3>Breakfast Sandwich</h3>
+
+<p class="description">
+Egg, cheese and toasted bread.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹280</span>
+<button class="add-btn"
+onclick="addToCart('Breakfast Sandwich',280)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<!-- ================= MORE ================= -->
+
+<div class="item" data-category="desserts">
+
+<span class="badge">NEW</span>
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsHGPi0bmBIJ8EgLpRrnuhQZhCfzSz09x314aL0QBY1Q&s=10"
+alt="Churros"
+data-emoji="🥨">
+</div>
+
+<h3>Churros</h3>
+
+<p class="description">
+Crisp cinnamon churros with chocolate sauce.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹210</span>
+<button class="add-btn"
+onclick="addToCart('Churros',210)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=700&q=80"
+alt="Ice Cream Sundae"
+data-emoji="🍨">
+</div>
+
+<h3>Ice Cream Sundae</h3>
+
+<p class="description">
+Vanilla ice cream with chocolate sauce and toppings.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹250</span>
+<button class="add-btn"
+onclick="addToCart('Ice Cream Sundae',250)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="desserts">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0YwH1zlj4DXmlZhDRgvoBhQgMam8g_0ssQitMazeffw&s=10"
+alt="Lemon Tart"
+data-emoji="🍋">
+</div>
+
+<h3>Lemon Tart</h3>
+
+<p class="description">
+Sweet pastry with bright lemon curd.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹260</span>
+<button class="add-btn"
+onclick="addToCart('Lemon Tart',260)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="pastries">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7JUVn9Yt2lMurTXZNm6gYns_5bIajJgdmSWphSwIhnA&s=100"
+alt="Cinnamon Roll"
+data-emoji="🤎">
+</div>
+
+<h3>Cinnamon Roll</h3>
+
+<p class="description">
+Soft cinnamon roll with vanilla icing.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹190</span>
+<button class="add-btn"
+onclick="addToCart('Cinnamon Roll',190)">
+Add +
+</button>
+</div>
+
+</div>
+
+
+<div class="item" data-category="pastries">
+
+<div class="food-image-wrapper">
+<img class="food-img"
+src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhjDElfwUaSryy6woQv_kLDhfwXpP5Io5WO6dyhNXU7Q&s=10"
+alt="Chocolate Eclair"
+data-emoji="🍫">
+</div>
+
+<h3>Chocolate Eclair</h3>
+
+<p class="description">
+Choux pastry filled with cream and chocolate.
+</p>
+
+<div class="bottom-row">
+<span class="price">₹210</span>
+<button class="add-btn"
+onclick="addToCart('Chocolate Eclair',210)">
+Add +
+</button>
+</div>
+
+</div>
+
+</main>
+
+
+<!-- ================= CHECKOUT ================= -->
+
+<section class="checkout-area">
+
+<p>
+Ready to make a completely unnecessary financial decision?
+</p>
+
+<button id="checkout" onclick="openFortune()">
+✨ Proceed to checkout
+</button>
+
+</section>
+
+
+<!-- ================= CART ================= -->
+
+<div class="cart-overlay"
+id="cartOverlay"
+onclick="backgroundCloseCart(event)">
+
+<aside class="cart-drawer">
+
+<div class="cart-header">
+
+<h2>
+your little cart 🛒
+</h2>
+
+<button class="close-cart"
+onclick="closeCart()">
+×
+</button>
+
+</div>
+
+<p id="cartEmpty">
+It's giving... empty.
+Add some happiness first.
+</p>
+
+<div id="cartItems"></div>
 
 <div class="cart-total">
 
-  Total: ₹<span id="cartTotal">0</span>
+<span>Total</span>
+
+<span>
+₹<span id="cartTotal">0</span>
+</span>
 
 </div>
 
-
-<button id="checkoutBtn">
-  Proceed to Payment →
+<button class="drawer-checkout"
+onclick="startCheckout()">
+I'm ready. Probably. →
 </button>
 
-</div> <!-- FORTUNE MODAL --> <div class="overlay" id="fortuneOverlay">
+</aside>
+
+</div>
+
+
+<!-- ================= FORTUNE COOKIE ================= -->
+
+<div class="fortune-overlay"
+id="fortuneOverlay">
+
 <div class="fortune-box">
 
+<!-- NORMAL COOKIE -->
 
-  <!-- NORMAL FORTUNE SCREEN -->
+<div id="cookieSection">
 
-  <div id="fortuneScreen">
+<h2>
+wait... one tiny thing 🥠
+</h2>
 
-    <h2>
-      🥠 Test Your Fortune
-    </h2>
+<p>
+Before checkout, company policy requires you
+to crack your completely normal and definitely
+harmless fortune cookie.
+</p>
 
-    <p>
-      Before you can proceed to payment,
-      the bakery requires you to consult the universe.
-    </p>
-
-
-    <div class="cookie">
-      🥠
-    </div>
-
-
-    <div id="fortuneValue">
-      Fortune: 100%
-    </div>
-
-
-    <div class="fortune-meter">
-
-      <div id="fortuneBar"></div>
-
-    </div>
-
-
-    <div id="fortuneMessage">
-
-      Your future looks...
-      suspiciously average.
-
-    </div>
-
-
-    <div class="fortune-buttons">
-
-      <button id="tryAgain">
-        🔮 Try Again
-      </button>
-
-      <button id="giveUp">
-        Leave
-      </button>
-
-    </div>
-
-  </div>
-  <script src="script.js"></script>
-
-<!-- =========================
-     RECEIPT MODAL
-========================= -->
-
-<div class="overlay" id="receiptOverlay">
-
-  <div class="receipt-box">
-
-    <div class="receipt">
-
-      <h2>🥐 CRUMB & DOOM</h2>
-
-      <p class="receipt-subtitle">
-        Extremely Legitimate Bakery
-      </p>
-
-      <div id="receiptItems"></div>
-
-      <div class="receipt-line"></div>
-
-      <div class="receipt-total">
-        TOTAL: ₹<span id="receiptTotal">0</span>
-      </div>
-
-      <div class="receipt-line"></div>
-
-      <p>
-        Fortune at checkout:
-        <strong><span id="receiptFortune">0</span>%</strong>
-      </p>
-
-      <p>
-        Payment status:
-        <strong>QUESTIONABLE</strong>
-      </p>
-
-      <p class="receipt-message">
-        Thank you for your completely
-        imaginary purchase.
-      </p>
-
-      <p class="receipt-footer">
-        100% baked goods.<br>
-        0% financial responsibility.
-      </p>
-
-    </div>
-
-    <div class="receipt-buttons">
-
-      <button id="printReceipt">
-        🖨️ Print Receipt
-      </button>
-
-      <button id="closeReceipt">
-        Return to Bakery
-      </button>
-
-    </div>
-
-  </div>
-
+<div id="cookie"
+class="cookie"
+onclick="crackCookie()">
+🥠
 </div>
 
-  <!-- =========================
-     FAKE CHECKOUT MODAL
-========================= -->
+<p style="font-size:.8rem;color:#806c73;">
+tap the cookie. you know you want to.
+</p>
 
-<div class="overlay" id="checkoutOverlay">
+<div id="fortune"></div>
 
-  <div class="checkout-box">
+<div id="disabledMessage">
 
-    <div class="checkout-spinner">
-      🥐
-    </div>
+<p style="font-size:3rem;margin:5px;">
+💀
+</p>
 
-    <h2 id="checkoutTitle">
-      Processing Payment...
-    </h2>
+<strong>
+yeah so... you're not shopping anymore.
+</strong>
 
-    <p id="checkoutMessage">
-      Contacting the bakery accountant.
-    </p>
+<p>
+The cookie has spoken.<br>
+We legally cannot explain further.
+</p>
 
-    <div class="checkout-progress">
+<button class="sad-btn"
+onclick="closeFortune()">
+okay i guess 😭
+</button>
 
-      <div id="checkoutProgressBar"></div>
-
-    </div>
-
-    <p id="checkoutStatus">
-      0%
-    </p>
-
-  </div>
+</div>
 
 </div>
 
 
-  <!-- BLOCKED SCREEN -->
+<!-- 4TH ATTEMPT -->
 
-  <div id="blockedMessage">
+<div id="fourthAttempt">
 
-    <div class="cookie">
-      💀🥠
-    </div>
+<div class="fourth-icon">
+🚨
+</div>
 
+<h2>
+okay... enough. 😭
+</h2>
 
-    <h2>
-      Fortune is not on your side.
-    </h2>
+<p style="font-size:1.05rem;">
+You've tried to checkout <strong>four times.</strong>
+</p>
 
+<p>
+At this point, even the bakery knows what you're
+trying to do.
+</p>
 
-    <p>
-      You have consulted the fortune cookie several times.
-    </p>
+<p style="font-size:1.2rem;font-weight:700;">
+The cookie department is officially concerned. 🥠
+</p>
 
-
-    <p>
-      Unfortunately, the universe has decided that
-      you are not allowed to purchase baked goods today.
-    </p>
-
-
-    <p>
-      Your payment cannot proceed.
-    </p>
-
-
-    <button id="backToShop">
-      Return to Bakery
-    </button>
-
-  </div>
+<button class="sad-btn"
+onclick="closeFortune()">
+fine, I'll leave 😭
+</button>
 
 </div>
 
-</div> <!-- Connect JavaScript --> <script src="script.js"></script> </body> </html>
+</div>
+
+</div>
+
+
+<div id="toast"></div>
+
+
+<script>
+
+/* =====================================================
+   CART
+===================================================== */
+
+let cart = [];
+
+
+/* =====================================================
+   CHECKOUT ATTEMPT COUNTER
+===================================================== */
+
+let checkoutAttempts = 0;
+
+
+/* =====================================================
+   FORTUNES
+===================================================== */
+
+const fortunes = [
+
+"🔮 Your fortune says: you shall not shop today.",
+
+"🥠 Plot twist: your shopping privileges have expired.",
+
+"💀 The cookie has decided that you have bought enough. You have bought nothing, but still.",
+
+"🚫 Your purchase has been rejected by the universe.",
+
+"✨ Great things await you. Unfortunately, none of them are pastries.",
+
+"😭 The bakery has entered its 'we don't sell things anymore' era.",
+
+"🧍 The cookie looked at your cart and simply said: absolutely not.",
+
+"🌚 Your destiny is calling. It says 'close the bakery tab'.",
+
+"🍰 The cake is real. The checkout is not.",
+
+"🧙 A mysterious bakery wizard has revoked your purchasing privileges.",
+
+"💅 You were this close to getting your pastries.",
+
+"🪦 Here lies your cart. It had potential.",
+
+"📵 Your order has been ghosted.",
+
+"🫠 The bakery has decided that you need to save your money.",
+
+"👁️ The cookie has seen your cart. The cookie is disappointed.",
+
+"🎀 Unfortunately, the vibes have been deemed insufficient for checkout.",
+
+"🧃 Financial responsibility has entered the chat.",
+
+"🐀 A bakery rat has reviewed your order and said no.",
+
+"📉 Your checkout aura is currently at 0%.",
+
+"💔 It's not you. It's the bakery.",
+
+"🛑 ERROR 404: permission to buy pastries not found.",
+
+"🌸 The universe has spoken. It said: maybe tomorrow.",
+
+"🥲 You came for pastries. You got character development.",
+
+"🎭 And now, the tragic conclusion of your shopping journey.",
+
+"🚪 Please leave the bakery. Respectfully.",
+
+"🥠 Fortune update: absolutely not.",
+
+"💀 The bakery has unfortunately become a museum.",
+
+"🍪 You may look at the food. You may not possess the food.",
+
+"📋 Your application for pastries has been denied.",
+
+"🫡 Thank you for your interest in buying things. We will not be moving forward."
+
+];
+
+
+/* =====================================================
+   ADD TO CART
+===================================================== */
+
+function addToCart(name, price) {
+
+const existing =
+cart.find(item => item.name === name);
+
+if (existing) {
+
+existing.quantity++;
+
+} else {
+
+cart.push({
+name,
+price,
+quantity: 1
+});
+
+}
+
+updateCart();
+
+showToast(
+random([
+"added to the bag 💅",
+"secured the goods 🫡",
+"excellent choice btw",
+"okayyyy taste 👀",
+"your cart is getting dangerous",
+"slay. added.",
+"financially irresponsible. love it.",
+"very important purchase."
+])
+);
+
+playSound(550,.08);
+
+}
+
+
+/* =====================================================
+   UPDATE CART
+===================================================== */
+
+function updateCart() {
+
+const count =
+cart.reduce(
+(sum,item) => sum + item.quantity,
+0
+);
+
+const total =
+cart.reduce(
+(sum,item) =>
+sum + item.price * item.quantity,
+0
+);
+
+document.getElementById("cartCount")
+.textContent = count;
+
+document.getElementById("cartTotal")
+.textContent = total;
+
+const container =
+document.getElementById("cartItems");
+
+const empty =
+document.getElementById("cartEmpty");
+
+if (cart.length === 0) {
+
+empty.style.display = "block";
+
+container.innerHTML = "";
+
+return;
+
+}
+
+empty.style.display = "none";
+
+container.innerHTML =
+cart.map((item,index) => `
+
+<div class="cart-item">
+
+<div>
+
+<strong>
+${item.name}
+</strong>
+
+<br>
+
+<small>
+₹${item.price} × ${item.quantity}
+</small>
+
+</div>
+
+<button
+class="remove"
+onclick="removeItem(${index})">
+×
+</button>
+
+</div>
+
+`).join("");
+
+}
+
+
+/* =====================================================
+   REMOVE ITEM
+===================================================== */
+
+function removeItem(index) {
+
+cart[index].quantity--;
+
+if (cart[index].quantity <= 0) {
+
+cart.splice(index,1);
+
+}
+
+updateCart();
+
+playSound(250,.06);
+
+}
+
+
+/* =====================================================
+   CART UI
+===================================================== */
+
+function openCart() {
+
+document
+.getElementById("cartOverlay")
+.classList.add("open");
+
+}
+
+
+function closeCart() {
+
+document
+.getElementById("cartOverlay")
+.classList.remove("open");
+
+}
+
+
+function backgroundCloseCart(event) {
+
+if (event.target.id === "cartOverlay") {
+
+closeCart();
+
+}
+
+}
+
+
+/* =====================================================
+   FILTERS
+===================================================== */
+
+function filterFood(category,button) {
+
+document
+.querySelectorAll(".filter-btn")
+.forEach(btn =>
+btn.classList.remove("active")
+);
+
+button.classList.add("active");
+
+document
+.querySelectorAll(".item")
+.forEach(item => {
+
+if (
+category === "all" ||
+item.dataset.category === category
+) {
+
+item.classList.remove("hidden");
+
+} else {
+
+item.classList.add("hidden");
+
+}
+
+});
+
+}
+
+
+/* =====================================================
+   CHECKOUT
+===================================================== */
+
+function startCheckout() {
+
+if (cart.length === 0) {
+
+showToast(
+"bestie... you have literally nothing 😭"
+);
+
+return;
+
+}
+
+closeCart();
+
+openFortune();
+
+}
+
+
+/* =====================================================
+   OPEN FORTUNE
+===================================================== */
+
+function openFortune() {
+
+if (cart.length === 0) {
+
+showToast(
+"Add something first. We need drama. 🍰"
+);
+
+return;
+
+}
+
+
+/* Count every actual checkout attempt */
+
+checkoutAttempts++;
+
+
+/* 4TH ATTEMPT */
+
+if (checkoutAttempts >= 4) {
+
+showFourthAttempt();
+
+return;
+
+}
+
+
+/* Reset the cookie EVERY TIME */
+
+resetFortuneCookie();
+
+document
+.getElementById("fortuneOverlay")
+.style.display = "flex";
+
+}
+
+
+/* =====================================================
+   RESET COOKIE
+===================================================== */
+
+function resetFortuneCookie() {
+
+const cookie =
+document.getElementById("cookie");
+
+const fortune =
+document.getElementById("fortune");
+
+const disabledMessage =
+document.getElementById("disabledMessage");
+
+const cookieSection =
+document.getElementById("cookieSection");
+
+const fourthAttempt =
+document.getElementById("fourthAttempt");
+
+
+cookieSection.style.display = "block";
+
+fourthAttempt.style.display = "none";
+
+cookie.style.display = "inline-block";
+
+cookie.classList.remove("cracking");
+
+fortune.style.display = "none";
+
+fortune.textContent = "";
+
+disabledMessage.style.display = "none";
+
+}
+
+
+/* =====================================================
+   4TH ATTEMPT MESSAGE
+===================================================== */
+
+function showFourthAttempt() {
+
+const cookieSection =
+document.getElementById("cookieSection");
+
+const fourthAttempt =
+document.getElementById("fourthAttempt");
+
+cookieSection.style.display = "none";
+
+fourthAttempt.style.display = "block";
+
+document
+.getElementById("fortuneOverlay")
+.style.display = "flex";
+
+playSound(120,.2);
+
+}
+
+
+/* =====================================================
+   COOKIE
+===================================================== */
+
+function crackCookie() {
+
+const cookie =
+document.getElementById("cookie");
+
+const fortune =
+document.getElementById("fortune");
+
+cookie.classList.add("cracking");
+
+playSound(180,.15);
+
+setTimeout(() => {
+
+playSound(80,.35);
+
+},120);
+
+
+setTimeout(() => {
+
+cookie.style.display = "none";
+
+fortune.textContent =
+random(fortunes);
+
+fortune.style.display = "block";
+
+document
+.getElementById("disabledMessage")
+.style.display = "block";
+
+playSound(65,.5);
+
+},550);
+
+}
+
+
+/* =====================================================
+   CLOSE FORTUNE
+===================================================== */
+
+function closeFortune() {
+
+document
+.getElementById("fortuneOverlay")
+.style.display = "none";
+
+}
+
+
+/* =====================================================
+   RANDOM
+===================================================== */
+
+function random(array) {
+
+return array[
+Math.floor(
+Math.random() * array.length
+)
+];
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message) {
+
+const toast =
+document.getElementById("toast");
+
+toast.textContent = message;
+
+toast.style.display = "block";
+
+clearTimeout(window.toastTimer);
+
+window.toastTimer =
+setTimeout(() => {
+
+toast.style.display = "none";
+
+},1500);
+
+}
+
+
+/* =====================================================
+   SOUND
+===================================================== */
+
+function playSound(frequency,duration) {
+
+try {
+
+const AudioContext =
+window.AudioContext ||
+window.webkitAudioContext;
+
+const ctx =
+new AudioContext();
+
+const oscillator =
+ctx.createOscillator();
+
+const gain =
+ctx.createGain();
+
+oscillator.type = "sine";
+
+oscillator.frequency.value =
+frequency;
+
+gain.gain.setValueAtTime(
+.12,
+ctx.currentTime
+);
+
+gain.gain.exponentialRampToValueAtTime(
+.001,
+ctx.currentTime + duration
+);
+
+oscillator.connect(gain);
+
+gain.connect(ctx.destination);
+
+oscillator.start();
+
+oscillator.stop(
+ctx.currentTime + duration
+);
+
+} catch(error) {
+
+// Audio unavailable.
+
+}
+
+}
+
+
+/* =====================================================
+   ROBUST IMAGE FALLBACK
+===================================================== */
+
+/*
+If an image cannot load:
+
+1. Try one more time with a different Unsplash URL.
+2. If that also fails, show a cute bakery emoji.
+*/
+
+const fallbackImages = {
+
+"🎂":
+"https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=700&q=80",
+
+"🧁":
+"https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=700&q=80",
+
+"🍪":
+"https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=700&q=80",
+
+"🍩":
+"https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=700&q=80",
+
+"🥐":
+"https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=700&q=80",
+
+"🍞":
+"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=700&q=80",
+
+"🥞":
+"https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=700&q=80",
+
+"🍰":
+"https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=700&q=80",
+
+"🍓":
+"https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=700&q=80",
+
+"🍫":
+"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=700&q=80"
+
+};
+
+
+document
+.querySelectorAll(".food-img")
+.forEach(img => {
+
+img.addEventListener("error",function() {
+
+const emoji =
+this.dataset.emoji || "🍰";
+
+
+/*
+Prevent infinite image retry.
+*/
+
+if (!this.dataset.fallbackTried) {
+
+this.dataset.fallbackTried = "true";
+
+const fallback =
+fallbackImages[emoji];
+
+if (fallback &&
+this.src !== fallback) {
+
+this.src = fallback;
+
+return;
+
+}
+
+}
+
+
+/*
+Final visual fallback.
+*/
+
+const wrapper =
+this.parentElement;
+
+wrapper.innerHTML = `
+
+<div class="image-fallback">
+${emoji}
+</div>
+
+`;
+
+});
+
+});
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+updateCart();
+
+</script>
+
+</body>
+</html>
